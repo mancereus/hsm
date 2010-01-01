@@ -4,13 +4,13 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.Map;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Splitter;
-import com.google.common.collect.Maps;
+import com.google.common.collect.Lists;
 import com.google.common.io.LineReader;
 
 import de.dkfz.phenopermutation.Phenotype;
@@ -24,9 +24,9 @@ import de.dkfz.phenopermutation.Phenotype;
 public class PhenoImporter {
     private final static Logger log = LoggerFactory.getLogger(PhenoImporter.class);
 
-    public Map<Integer, Phenotype> importPhenos(File file) {
+    public Phenotype[] importPhenos(File file) {
         log.info("importPhenos");
-        Map<Integer, Phenotype> phenos = Maps.newHashMap();
+        List<Phenotype> phenos = Lists.newArrayList();
         try {
             LineReader reader = new LineReader(new FileReader(file));
             String line = null;
@@ -48,7 +48,7 @@ public class PhenoImporter {
                 String sex = iterator.next();
                 String value = iterator.next();
                 Phenotype pheno = new Phenotype(id, Double.valueOf(value));
-                phenos.put(id, pheno);
+                phenos.add(pheno);
                 id++;
             }
         } catch (IOException e) {
@@ -56,7 +56,7 @@ public class PhenoImporter {
             e.printStackTrace();
         }
         log.info("importPhenos finished: " + phenos.size());
-        return phenos;
+        return phenos.toArray(new Phenotype[phenos.size()]);
 
     }
 

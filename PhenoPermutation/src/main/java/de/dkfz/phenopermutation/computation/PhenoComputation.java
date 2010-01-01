@@ -2,8 +2,6 @@ package de.dkfz.phenopermutation.computation;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,32 +16,32 @@ import de.dkfz.phenopermutation.importer.PhenoImporter;
 public class PhenoComputation {
 
     private final static Logger log = LoggerFactory.getLogger(PhenoComputation.class);
-    private final List<Person> persons;
+    private final Person[] persons;
     private final PhenoResult result;
-    private final Map<Integer, Phenotype> phenos;
+    private final Phenotype[] phenos;
 
-    public PhenoComputation(List<Person> persons, PhenoResult result, Map<Integer, Phenotype> phenos) {
+    public PhenoComputation(Person[] persons, PhenoResult result, Phenotype[] phenos) {
         this.persons = persons;
         this.result = result;
         this.phenos = phenos;
-        log.info("haplolength: {} permutations: {}", persons.get(0).getHaplo1().getLength(),
-                result.getPermutators().length);
+        log
+                .info("haplolength: {} permutations: {}", persons[0].getHaplo1().getLength(),
+                        result.getPermutators().length);
     }
 
     public void calculateSharing() {
-        int personSize = persons.size();
+        int personSize = persons.length;
 
         for (int i = 0; i < personSize - 1; i++) {
             long start = System.currentTimeMillis();
-            Person per1 = persons.get(i);
+            Person per1 = persons[i];
             for (int j = i + 1; j < personSize; j++) {
-                Person per2 = persons.get(j);
+                Person per2 = persons[j];
                 comparePersonHaplos(per1, per2);
                 // log.info(" person(i) to person(j): {} time: {}", i + "->" +
                 // j, System.currentTimeMillis() - start);
             }
             log.info("person({}) finished: {}ms", i, System.currentTimeMillis() - start);
-            System.exit(0);
         }
     }
 
@@ -71,8 +69,8 @@ public class PhenoComputation {
             Permutator[] perms = result.getPermutators();
             int sharingvalue = calc.getNextSharing();
             for (int k = 0; k < perms.length; k++) {
-                double pheno1 = phenos.get(perms[k].getMappedId(per1id)).getValue() - getMu();
-                double pheno2 = phenos.get(perms[k].getMappedId(per2id)).getValue() - getMu();
+                double pheno1 = phenos[perms[k].getMappedId(per1id)].getValue() - getMu();
+                double pheno2 = phenos[perms[k].getMappedId(per2id)].getValue() - getMu();
                 result.addResult(i, k, sharingvalue * pheno1 * pheno2);
             }
         }
@@ -80,15 +78,15 @@ public class PhenoComputation {
 
     public static void main(String[] args) throws IOException {
 
-        Map<Integer, Phenotype> phenos = new PhenoImporter()
+        Phenotype[] phenos = new PhenoImporter()
         // .importPhenos(new File("src/test/resources/phenotest.ga"));
                 .importPhenos(new File("src/main/resources/mammastu.pheno.ga"));
-        List<Person> persons = new HaploImporter().importHaplos(new File(
+        Person[] persons = new HaploImporter().importHaplos(new File(
         // "src/test/resources/haplotest.dat"));
                 "src/main/resources/mammastu.ent.chr.22.hap"));
-        int haplosize = persons.get(0).getHaplo1().getLength();
-        int permutationsize = 4;
-        PhenoResult result = new PhenoResult(haplosize, permutationsize, persons.size());
+        int haplosize = persons[0].getHaplo1().getLength();
+        int permutationsize = 100;
+        PhenoResult result = new PhenoResult(haplosize, permutationsize, persons.length);
         PhenoComputation pc = new PhenoComputation(persons, result, phenos);
         // List<Map<Permutator, Double>> result = Lists.newArrayList();
         pc.calculateSharing();

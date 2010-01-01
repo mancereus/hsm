@@ -23,7 +23,7 @@ public class HaploImporter {
 
     }
 
-    public List<Person> importHaplos(File file) {
+    public Person[] importHaplos(File file) {
         log.info("importHaplos");
         List<Person> persons = Lists.newArrayList();
         try {
@@ -57,7 +57,7 @@ public class HaploImporter {
         }
         log.info("importHaplos finished: " + persons.size());
 
-        return persons;
+        return persons.toArray(new Person[persons.size()]);
     }
 
     private Haplotype getHaplo(String s) {
