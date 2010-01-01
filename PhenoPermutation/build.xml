@@ -1,0 +1,75 @@
+<project name="PhenoComputation" default="dist" basedir=".">
+	<description> 
+     standard tasks
+  </description>
+
+	<!-- set global properties for this build -->
+	<property name="src" location="src/main/java" />
+	<property name="build" location="build" />
+	<property name="dist" location="dist" />
+
+	<!-- classpath -->
+	<path id="classpath.build">
+		<fileset dir="lib" includes="*.jar" />
+	</path>
+	<path id="classpath.test">
+		<pathelement path="${build}" />
+		<fileset dir="lib" includes="*.jar" />
+		<fileset dir="lib/test" includes="*.jar" />
+	</path>
+	<path id="classpath.run">
+		<pathelement path="${build}" />
+		<fileset dir="lib" includes="*.jar" />
+	</path>
+
+	<!-- initial steps -->
+	<target name="init">
+		<mkdir dir="${build}" />
+		<mkdir dir="${dist}" />
+	</target>
+
+	<!-- clean all-->
+	<target name="clean" description="clean all">
+		<delete dir="${build}" />
+	</target>
+
+	<!-- build and dist -->
+	<target name="build" depends="init">
+		<javac classpathref="classpath.build" srcdir="${src}" destdir="${build}">
+		</javac>
+	</target>
+
+	<target name="dist" depends="build" description="generate jar file">
+		<jar destfile="dist/phenocom.jar">
+			<fileset dir="${build}" includes="*">
+			</fileset>
+		</jar>
+	</target>
+
+	<!-- test -->
+	<target name="test" depends="build" description="test all methods">
+		<mkdir dir="test" />
+		<echo>test results can be found in test/
+		
+		</echo>
+		<javac classpathref="classpath.test" srcdir="src/test/java" destdir="${build}">
+		</javac>
+		<junit dir="." printsummary="true" haltonerror="true" haltonfailure="true">
+			<classpath refid="classpath.test">
+			</classpath>
+			<formatter type="plain" />
+			<batchtest todir="test">
+				<fileset dir="src/test/java">
+					<include name="**/*Test*.java" />
+				</fileset>
+			</batchtest>
+		</junit>
+	</target>
+
+	<!-- run -->
+	<target name="run" depends="dist" description="test all methods">
+		<java classpathref="classpath.run" classname="de.dkfz.phenocomputation.PhenoComputation">
+		</java>
+	</target>
+
+</project>

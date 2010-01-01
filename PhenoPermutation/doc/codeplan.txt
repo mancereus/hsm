@@ -1,0 +1,47 @@
+haplo:
+
+- const mü = 0.01 
+
+- PhenotypeImporter: import pheno array.[i] 0932
+- HaplotypeImporter: import haplo match id =i
+	- id haplo1 haplo2
+	- match id.i id.j i < j 
+		6 result h1h2 h1h3 h1h4 h2h3 h2h4 h3h4 ->  xaus8000: (posx,l12,r12,(pheno1-mü)*(pheno2-mü))
+	- posx: (sum(lij)+sum(rij))*factor -> result(x)
+
+- permutiere100mal rerun -> result(permi, x, phenoliste(i))
+	- resort phenoi random
+	
+- vergleiche 101 werte an pos x
+
+
+Coding:
+
+- Die ErgebnisWerte können für eine Position x seperat implementiert werden. Es gibt keine Abhängigkeiten zu anderen Positionen.
+- Die Ergebniswerte für eine Position x und eine Phenoliste ist ein double result.
+- Zur Berechnung muss für die Position x eine Tupelliste (lij,rij) existieren. Diese kann vorab berechnet werden. <- object
+
+
+hints:
+ - mehr 0 als 1 in haplotype
+ 
+
+changes:
+
+PhenoImporter
+   - import pheno by header tag "id" "pheno" rest egal.
+   - or import ped files (6 column output from plink)
+   - match extid to haplos
+
+Computation:
+   - counting: #matches h1, h2
+   - length: length(h1)
+   - sharing: #match benachbart
+   - export Markersummen mit phenopermutatuion   
+   
+   
+
+question:
+Workflow, Angabe der Dateinamen?
+
+
