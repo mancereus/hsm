@@ -2,6 +2,7 @@ package de.dkfz.phenopermutation.computation;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,7 +91,8 @@ public class PhenoComputation {
         PhenoComputation pc = new PhenoComputation(persons, result, phenos);
         // List<Map<Permutator, Double>> result = Lists.newArrayList();
         pc.calculateSharing();
-        pc.getResult();
+        Map<Permutator, Double> permutatorSum = pc.getResult().getPermutatorSum();
+        log.info("result:" + permutatorSum);
 
     }
 
