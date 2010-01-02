@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module rename-to='hsmgui'>
+	<!-- Inherit the core Web Toolkit stuff.                        -->
+	<inherits name="com.google.gwt.user.User" />
+	<inherits name="com.google.gwt.inject.Inject" />
+
+	<inherits name='net.customware.gwt.dispatch.Dispatch' />
+	<inherits name='net.customware.gwt.presenter.Presenter' />
+
+	<!-- Inherit the core Web Toolkit stuff.                        -->
+	<inherits name='com.google.gwt.user.User' />
+
+	<!-- Inherit the default GWT style sheet.  You can change       -->
+	<!-- the theme of your GWT application by uncommenting          -->
+	<!-- any one of the following lines.                            -->
+	<inherits name='com.google.gwt.user.theme.standard.Standard' />
+	<!-- <inherits name='com.google.gwt.user.theme.chrome.Chrome'/> -->
+	<!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/>     -->
+
+	<!-- Other module inherits                                      -->
+	<!--
+		Add gwt-log support, default level `OFF` - check for extended property
+		'log_level' to see if this is overridden
+	-->
+	<inherits name="com.allen_sauer.gwt.log.gwt-log-OFF" />
+
+	<!-- Also compile Logger at `INFO` level -->
+	<extend-property name="log_level" values="INFO" />
+	<set-property name="log_level" value="INFO" />
+
+	<!--
+		Turn off the floating logger - output will be shown in the hosted mode
+		console
+	-->
+	<set-property name="log_DivLogger" value="DISABLED" />
+
+	<!-- Specify the app entry point class.                         -->
+	<entry-point class='de.dkfz.hsmgui.client.HsmGui' />
+
+	<!-- Specify the paths for translatable code                    -->
+	<source path="shared" />
+	<source path='client' />
+
+</module>

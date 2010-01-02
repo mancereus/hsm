@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/aopalliance.jar"/>
+	<classpathentry kind="lib" path="lib/gin-200909-src.jar"/>
+	<classpathentry kind="lib" path="lib/gin-200909.jar"/>
+	<classpathentry kind="lib" path="lib/guice-2.0.jar"/>
+	<classpathentry kind="lib" path="lib/guice-servlet-2.0.jar"/>
+	<classpathentry kind="lib" path="lib/gwt-dispatch-1.0.0.jar"/>
+	<classpathentry kind="lib" path="lib/gwt-presenter-1.1.0-20090827.055938-1.jar"/>
+	<classpathentry kind="lib" path="lib/gwt-log-3.0.0.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-api-1.5.10.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-simple-1.5.10.jar"/>
+	<classpathentry kind="output" path="war/WEB-INF/classes"/>
+</classpath>
