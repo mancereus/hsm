@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
-<listEntry value="/PhenoPermutation/src/main/java/de/dkfz/phenopermutation/computation/PhenoComputation.java"/>
+<listEntry value="/PhenoPermutation/src/main/java/de/dkfz/phenopermutation/computation/HaploSharingComputation.java"/>
 </listAttribute>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
 <listEntry value="1"/>
@@ -15,7 +15,7 @@
 <stringAttribute key="org.eclipse.hyades.trace.ui.ATTR_DESTINATION_PROJECT" value="ProfileProject"/>
 <booleanAttribute key="org.eclipse.hyades.trace.ui.ATTR_PROFILE_TO_FILE" value="false"/>
 <stringAttribute key="org.eclipse.hyades.trace.ui.ATTR_PROFILING_SET" value="tptp-dummy-profiling-set-PhenoComputation"/>
-<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="de.dkfz.phenopermutation.computation.PhenoComputation"/>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="de.dkfz.phenopermutation.computation.HaploSharingComputation"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="PhenoPermutation"/>
 <booleanAttribute key="org.eclipse.tptp.platform.jvmti.client.ATTR_EXEC_AUTO_POLLING" value="true"/>
 <booleanAttribute key="org.eclipse.tptp.platform.jvmti.client.ATTR_EXEC_CPU_TIME" value="true"/>
