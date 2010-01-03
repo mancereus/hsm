@@ -10,15 +10,16 @@ import java.util.BitSet;
  */
 public class Haplotype extends BitSet {
 
-	private static final long serialVersionUID = 3218510359456693175L;
-	private int length;
+    private static final long serialVersionUID = 3218510359456693175L;
+    private final int length;
 
-	public Haplotype(int length) {
-		super(length);
-		this.length = length;
-	}
+    public Haplotype(int length) {
+        super(length);
+        this.length = length;
+    }
 
-	public int getLength() {
-		return length;
-	}
+    public int getLength() {
+        return length;
+    }
+
 }

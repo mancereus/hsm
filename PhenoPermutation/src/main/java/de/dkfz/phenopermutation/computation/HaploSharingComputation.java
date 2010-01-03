@@ -3,6 +3,13 @@ package de.dkfz.phenopermutation.computation;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +27,7 @@ public class HaploSharingComputation {
     private final Person[] persons;
     private final PhenoResult result;
     private final Phenotype[] phenos;
+    private final ExecutorService pool;
 
     public HaploSharingComputation(Person[] persons, Phenotype[] phenos, int permutationsize) {
         int haplosize = persons[0].getHaplo1().getLength();
@@ -30,21 +38,48 @@ public class HaploSharingComputation {
         log
                 .info("haplolength: {} permutations: {}", persons[0].getHaplo1().getLength(),
                         result.getPermutators().length);
+        int cpus = Runtime.getRuntime().availableProcessors();
+        log.info("Number of processors available to the JVM: " + cpus);
+        pool = Executors.newFixedThreadPool(cpus);
     }
 
     public void calculateSharing() {
-        int personSize = persons.length;
+        final int personSize = persons.length;
 
+        CompletionService<Long> completionService = new ExecutorCompletionService<Long>(pool);
         for (int i = 0; i < personSize - 1; i++) {
-            long start = System.currentTimeMillis();
-            Person per1 = persons[i];
-            for (int j = i + 1; j < personSize; j++) {
-                Person per2 = persons[j];
-                comparePersonHaplos(per1, per2);
-                // log.info(" person(i) to person(j): {} time: {}", i + "->" +
-                // j, System.currentTimeMillis() - start);
+            final Person per1 = persons[i];
+            final int minidx = i;
+
+            completionService.submit(new Callable<Long>() {
+                @Override
+                public Long call() {
+                    final long start = System.currentTimeMillis();
+                    log.info("start person({}):", minidx);
+                    comparePersons(personSize, minidx, per1);
+                    return System.currentTimeMillis() - start;
+                }
+            });
+        }
+        for (int i = 0; i < personSize - 1; i++) {
+            try {
+                Future<Long> future = completionService.take();
+                Long duration = future.get();
+                log.info("finish person: {}ms", duration);
+
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
             }
-            log.info("person({}) finished: {}ms", i, System.currentTimeMillis() - start);
+
+        }
+    }
+
+    private void comparePersons(int personSize, int i, Person per1) {
+        for (int j = i + 1; j < personSize; j++) {
+            Person per2 = persons[j];
+            comparePersonHaplos(per1, per2);
         }
     }
 
@@ -74,7 +109,9 @@ public class HaploSharingComputation {
             for (int k = 0; k < perms.length; k++) {
                 double pheno1 = phenos[perms[k].getMappedId(per1id)].getValue() - getMu();
                 double pheno2 = phenos[perms[k].getMappedId(per2id)].getValue() - getMu();
-                result.addResult(i, k, sharingvalue * pheno1 * pheno2);
+                synchronized (result) {
+                    result.addResult(i, k, sharingvalue * pheno1 * pheno2);
+                }
             }
         }
     }
