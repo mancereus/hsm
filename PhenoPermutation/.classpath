@@ -11,6 +11,7 @@
 	<classpathentry kind="lib" path="lib/test/mockito-all-1.8.2.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-api-1.5.10.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-simple-1.5.10.jar"/>
+	<classpathentry kind="lib" path="lib/commons-math-2.1-SNAPSHOT.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

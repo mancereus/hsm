@@ -14,14 +14,16 @@ import de.dkfz.phenopermutation.Phenotype;
 import de.dkfz.phenopermutation.importer.HaploImporter;
 import de.dkfz.phenopermutation.importer.PhenoImporter;
 
-public class PhenoComputation {
+public class HaploSharingComputation {
 
-    private final static Logger log = LoggerFactory.getLogger(PhenoComputation.class);
+    private final static Logger log = LoggerFactory.getLogger(HaploSharingComputation.class);
     private final Person[] persons;
     private final PhenoResult result;
     private final Phenotype[] phenos;
 
-    public PhenoComputation(Person[] persons, PhenoResult result, Phenotype[] phenos) {
+    public HaploSharingComputation(Person[] persons, Phenotype[] phenos, int permutationsize) {
+        int haplosize = persons[0].getHaplo1().getLength();
+        PhenoResult result = new PhenoResult(haplosize, permutationsize, persons.length);
         this.persons = persons;
         this.result = result;
         this.phenos = phenos;
@@ -85,15 +87,18 @@ public class PhenoComputation {
         Person[] persons = new HaploImporter().importHaplos(new File(
         // "src/test/resources/haplotest.dat"));
                 "src/main/resources/mammastu.ent.chr.22.hap"));
-        int haplosize = persons[0].getHaplo1().getLength();
         int permutationsize = 100;
-        PhenoResult result = new PhenoResult(haplosize, permutationsize, persons.length);
-        PhenoComputation pc = new PhenoComputation(persons, result, phenos);
-        // List<Map<Permutator, Double>> result = Lists.newArrayList();
-        pc.calculateSharing();
-        Map<Permutator, Double> permutatorSum = pc.getResult().getPermutatorSum();
+        HaploSharingComputation pc = new HaploSharingComputation(persons, phenos, permutationsize);
+        Map<Permutator, Double> permutatorSum = pc.computeSharing(phenos, persons);
         log.info("result:" + permutatorSum);
 
+    }
+
+    public Map<Permutator, Double> computeSharing(Phenotype[] phenos, Person[] persons) {
+        // List<Map<Permutator, Double>> result = Lists.newArrayList();
+        calculateSharing();
+        Map<Permutator, Double> permutatorSum = getResult().getPermutatorSum();
+        return permutatorSum;
     }
 
     private PhenoResult getResult() {

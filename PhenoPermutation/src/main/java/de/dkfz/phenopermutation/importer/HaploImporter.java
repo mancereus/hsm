@@ -43,7 +43,6 @@ public class HaploImporter {
                 int id = Integer.parseInt(iterator.next());
                 // second row
                 line = reader.readLine();
-                // System.out.println("haplo1: " + line);
                 Haplotype h1 = getHaplo(line);
                 // third row
                 line = reader.readLine();
@@ -52,8 +51,7 @@ public class HaploImporter {
                 id++;
             }
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error("import phnenos error", e);
         }
         log.info("importHaplos finished: " + persons.size());
 

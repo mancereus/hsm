@@ -52,8 +52,7 @@ public class PhenoImporter {
                 id++;
             }
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error("import phnenos error", e);
         }
         log.info("importPhenos finished: " + phenos.size());
         return phenos.toArray(new Phenotype[phenos.size()]);
