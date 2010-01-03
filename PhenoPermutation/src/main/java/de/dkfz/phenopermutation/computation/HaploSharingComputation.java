@@ -87,7 +87,7 @@ public class HaploSharingComputation {
         Person[] persons = new HaploImporter().importHaplos(new File(
         // "src/test/resources/haplotest.dat"));
                 "src/main/resources/mammastu.ent.chr.22.hap"));
-        int permutationsize = 100;
+        int permutationsize = 3;
         HaploSharingComputation pc = new HaploSharingComputation(persons, phenos, permutationsize);
         Map<Permutator, Double> permutatorSum = pc.computeSharing(phenos, persons);
         log.info("result:" + permutatorSum);
