@@ -59,6 +59,7 @@ public class SharingStatistics {
      * @throws MathException
      */
     public static void main(String[] args) throws MathException {
+        log.info("something is working");
         Phenotype[] phenos = new PhenoImporter().importPhenos(new File("src/test/resources/phenotest.ga"));
         // .importPhenos(new File("src/main/resources/mammastu.pheno.ga"));
         String filename = "src/test/resources/haplotest.dat";
@@ -70,6 +71,19 @@ public class SharingStatistics {
         StringBuilder str = shst.getOutput();
         shst.writeOutput(str.toString(), filename);
 
+        Iterator<String> out = Splitter.on(CharMatcher.anyOf("/.")).split(filename).iterator();
+        String result = "";
+        String tmp = "";
+        while (out.hasNext()) {
+            result = tmp;
+            tmp = out.next();
+        }
+        String outfile = result;
+        try {
+            Files.write(output.getBytes(), new File(outfile + ".hsm"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private StringBuilder getOutput() throws MathException {
@@ -82,6 +96,8 @@ public class SharingStatistics {
 
     private void writeOutput(String output, String filename) throws MathException {
 
+        log.info("write output");
+
         Iterator<String> out = Splitter.on(CharMatcher.anyOf("/.")).split(filename).iterator();
         String result = "";
         String tmp = "";
@@ -91,7 +107,7 @@ public class SharingStatistics {
         }
         String outfile = result;
         try {
-            Files.write(output.getBytes(), new File(outfile + ".hsm"));
+            Files.write(output.getBytes(), new File("src/test/resources/" + outfile + ".hsm"));
         } catch (IOException e) {
             e.printStackTrace();
         }

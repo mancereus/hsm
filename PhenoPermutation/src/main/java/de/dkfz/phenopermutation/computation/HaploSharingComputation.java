@@ -34,18 +34,26 @@ public class HaploSharingComputation {
 
     public void calculateSharing() {
         int personSize = persons.length;
+        long start0 = System.currentTimeMillis();
 
         for (int i = 0; i < personSize - 1; i++) {
             long start = System.currentTimeMillis();
             Person per1 = persons[i];
+            compareWithinPersonHaplos(per1);
             for (int j = i + 1; j < personSize; j++) {
                 Person per2 = persons[j];
-                comparePersonHaplos(per1, per2);
+                compareBetweenPersonHaplos(per1, per2);
                 // log.info(" person(i) to person(j): {} time: {}", i + "->" +
                 // j, System.currentTimeMillis() - start);
             }
             log.info("person({}) finished: {}ms", i, System.currentTimeMillis() - start);
         }
+        /*
+         * within person comparison of the last person
+         */
+        Person pers = persons[personSize - 1];
+        compareWithinPersonHaplos(pers);
+        log.info("all finished: {}min", (System.currentTimeMillis() - start0) / 1000);
     }
 
     public double getMu() {
@@ -53,16 +61,55 @@ public class HaploSharingComputation {
         // compute from phenos, cache
     }
 
+    /**
+     * nicht lšschen, kšnnen wir ggf noch gebrauchen
+     * 
+     * @param person
+     * @param person2
+     */
     private void comparePersonHaplos(Person person, Person person2) {
-        addSharingValues(person.getHaplo1(), person.getHaplo2(), person.getPos(), person.getPos());
+        /*
+         * within person comparison
+         */
+        if (!person.isFlag()) {
+            addSharingValues(person.getHaplo1(), person.getHaplo2(), person.getPos(), person.getPos());
+            person.setFlag(true);
+        }
+        /*
+         * between person comparisons
+         */
         addSharingValues(person.getHaplo1(), person2.getHaplo1(), person.getPos(), person2.getPos());
         addSharingValues(person.getHaplo1(), person2.getHaplo2(), person.getPos(), person2.getPos());
 
         addSharingValues(person.getHaplo2(), person2.getHaplo1(), person.getPos(), person2.getPos());
         addSharingValues(person.getHaplo2(), person2.getHaplo2(), person.getPos(), person2.getPos());
 
-        addSharingValues(person2.getHaplo1(), person2.getHaplo2(), person2.getPos(), person2.getPos());
+        /*
+         * within person2 comparison
+         */
+        if (!person2.isFlag()) {
+            addSharingValues(person2.getHaplo1(), person2.getHaplo2(), person2.getPos(), person2.getPos());
+            person2.setFlag(true);
+        }
+    }
 
+    private void compareBetweenPersonHaplos(Person person, Person person2) {
+        /*
+         * between person comparisons
+         */
+        addSharingValues(person.getHaplo1(), person2.getHaplo1(), person.getPos(), person2.getPos());
+        addSharingValues(person.getHaplo1(), person2.getHaplo2(), person.getPos(), person2.getPos());
+
+        addSharingValues(person.getHaplo2(), person2.getHaplo1(), person.getPos(), person2.getPos());
+        addSharingValues(person.getHaplo2(), person2.getHaplo2(), person.getPos(), person2.getPos());
+
+    }
+
+    private void compareWithinPersonHaplos(Person person) {
+        /*
+         * within person comparison
+         */
+        addSharingValues(person.getHaplo1(), person.getHaplo2(), person.getPos(), person.getPos());
     }
 
     private void addSharingValues(Haplotype h1, Haplotype h2, int per1id, int per2id) {
@@ -87,7 +134,7 @@ public class HaploSharingComputation {
         Person[] persons = new HaploImporter().importHaplos(new File(
         // "src/test/resources/haplotest.dat"));
                 "src/main/resources/mammastu.ent.chr.22.hap"));
-        int permutationsize = 3;
+        int permutationsize = 100;
         HaploSharingComputation pc = new HaploSharingComputation(persons, phenos, permutationsize);
         Map<Permutator, double[]> permutatorSum = pc.computeSharing(phenos, persons);
         // log.info("result:" + permutatorSum);
