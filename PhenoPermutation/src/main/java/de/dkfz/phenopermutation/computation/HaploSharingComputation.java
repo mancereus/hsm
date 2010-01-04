@@ -34,6 +34,7 @@ public class HaploSharingComputation {
 
     public void calculateSharing() {
         int personSize = persons.length;
+        long start0 = System.currentTimeMillis();
 
         for (int i = 0; i < personSize - 1; i++) {
             long start = System.currentTimeMillis();
@@ -47,6 +48,12 @@ public class HaploSharingComputation {
             }
             log.info("person({}) finished: {}ms", i, System.currentTimeMillis() - start);
         }
+        /*
+         * within person comparison of the last person
+         */
+        Person pers = persons[personSize - 1];
+        compareWithinPersonHaplos(pers);
+        log.info("all finished: {}min", (System.currentTimeMillis() - start0) / 1000);
     }
 
     public double getMu() {
@@ -127,7 +134,7 @@ public class HaploSharingComputation {
         Person[] persons = new HaploImporter().importHaplos(new File(
         // "src/test/resources/haplotest.dat"));
                 "src/main/resources/mammastu.ent.chr.22.hap"));
-        int permutationsize = 3;
+        int permutationsize = 100;
         HaploSharingComputation pc = new HaploSharingComputation(persons, phenos, permutationsize);
         Map<Permutator, double[]> permutatorSum = pc.computeSharing(phenos, persons);
         // log.info("result:" + permutatorSum);
