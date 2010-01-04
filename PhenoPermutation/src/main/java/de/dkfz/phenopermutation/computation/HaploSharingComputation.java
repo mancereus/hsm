@@ -38,9 +38,10 @@ public class HaploSharingComputation {
         for (int i = 0; i < personSize - 1; i++) {
             long start = System.currentTimeMillis();
             Person per1 = persons[i];
+            compareWithinPersonHaplos(per1);
             for (int j = i + 1; j < personSize; j++) {
                 Person per2 = persons[j];
-                comparePersonHaplos(per1, per2);
+                compareBetweenPersonHaplos(per1, per2);
                 // log.info(" person(i) to person(j): {} time: {}", i + "->" +
                 // j, System.currentTimeMillis() - start);
             }
@@ -53,6 +54,12 @@ public class HaploSharingComputation {
         // compute from phenos, cache
     }
 
+    /**
+     * nicht lšschen, kšnnen wir ggf noch gebrauchen
+     * 
+     * @param person
+     * @param person2
+     */
     private void comparePersonHaplos(Person person, Person person2) {
         /*
          * within person comparison
@@ -77,6 +84,25 @@ public class HaploSharingComputation {
             addSharingValues(person2.getHaplo1(), person2.getHaplo2(), person2.getPos(), person2.getPos());
             person2.setFlag(true);
         }
+    }
+
+    private void compareBetweenPersonHaplos(Person person, Person person2) {
+        /*
+         * between person comparisons
+         */
+        addSharingValues(person.getHaplo1(), person2.getHaplo1(), person.getPos(), person2.getPos());
+        addSharingValues(person.getHaplo1(), person2.getHaplo2(), person.getPos(), person2.getPos());
+
+        addSharingValues(person.getHaplo2(), person2.getHaplo1(), person.getPos(), person2.getPos());
+        addSharingValues(person.getHaplo2(), person2.getHaplo2(), person.getPos(), person2.getPos());
+
+    }
+
+    private void compareWithinPersonHaplos(Person person) {
+        /*
+         * within person comparison
+         */
+        addSharingValues(person.getHaplo1(), person.getHaplo2(), person.getPos(), person.getPos());
     }
 
     private void addSharingValues(Haplotype h1, Haplotype h2, int per1id, int per2id) {
