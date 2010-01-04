@@ -68,17 +68,16 @@ public class SharingStatistics {
         HaploSharingComputation pc = new HaploSharingComputation(persons, phenos, permutationsize);
         Map<Permutator, double[]> data = pc.computeSharing(phenos, persons);
         SharingStatistics shst = new SharingStatistics(data);
-        StringBuilder str = shst.getOutput();
-        shst.writeOutput(str.toString(), filename);
 
+        shst.writeOutput(shst.getOutput(), filename);
     }
 
-    private StringBuilder getOutput() throws MathException {
+    private String getOutput() throws MathException {
         StringBuilder str = new StringBuilder();
         for (int i = 0; i < getPositionsize(); i++) {
             str.append(Joiner.on(" ").join(i, getM(i), getTM(i), getPM(i), "\n"));
         }
-        return str;
+        return str.toString();
     }
 
     private void writeOutput(String output, String filename) throws MathException {
