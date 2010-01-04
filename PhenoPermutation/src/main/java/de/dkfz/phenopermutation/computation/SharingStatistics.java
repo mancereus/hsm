@@ -1,6 +1,7 @@
 package de.dkfz.phenopermutation.computation;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -11,6 +12,11 @@ import org.apache.commons.math.stat.StatUtils;
 import org.apache.commons.math.stat.descriptive.moment.StandardDeviation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.CharMatcher;
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
+import com.google.common.io.Files;
 
 import de.dkfz.phenopermutation.Person;
 import de.dkfz.phenopermutation.Phenotype;
@@ -47,7 +53,8 @@ public class SharingStatistics {
     public static void main(String[] args) throws MathException {
         Phenotype[] phenos = new PhenoImporter().importPhenos(new File("src/test/resources/phenotest.ga"));
         // .importPhenos(new File("src/main/resources/mammastu.pheno.ga"));
-        Person[] persons = new HaploImporter().importHaplos(new File("src/test/resources/haplotest.dat"));
+        String filename = "src/test/resources/haplotest.dat";
+        Person[] persons = new HaploImporter().importHaplos(new File(filename));
         // "src/main/resources/mammastu.ent.chr.22.hap"));
         HaploSharingComputation pc = new HaploSharingComputation(persons, phenos, permutationsize);
         Map<Permutator, Double> data = pc.computeSharing(phenos, persons);
@@ -57,7 +64,25 @@ public class SharingStatistics {
         log.info("SDM: {}", shst.getSDM());
         log.info("TM: {}", shst.getTM());
         log.info("PM: {}", shst.getPM());
+        shst.writeOutput(filename);
 
+    }
+
+    private void writeOutput(String filename) throws MathException {
+        String output = Joiner.on(" ").join(getM(), getTM(), getPM());
+        Iterator<String> out = Splitter.on(CharMatcher.anyOf("/.")).split(filename).iterator();
+        String result = "";
+        String tmp = "";
+        while (out.hasNext()) {
+            result = tmp;
+            tmp = out.next();
+        }
+        String outfile = result;
+        try {
+            Files.write(output.getBytes(), new File(outfile + ".hsm"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public Double getM() {
