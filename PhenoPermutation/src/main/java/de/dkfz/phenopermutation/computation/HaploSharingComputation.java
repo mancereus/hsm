@@ -54,15 +54,29 @@ public class HaploSharingComputation {
     }
 
     private void comparePersonHaplos(Person person, Person person2) {
-        addSharingValues(person.getHaplo1(), person.getHaplo2(), person.getPos(), person.getPos());
+        /*
+         * within person comparison
+         */
+        if (!person.isFlag()) {
+            addSharingValues(person.getHaplo1(), person.getHaplo2(), person.getPos(), person.getPos());
+            person.setFlag(true);
+        }
+        /*
+         * between person comparisons
+         */
         addSharingValues(person.getHaplo1(), person2.getHaplo1(), person.getPos(), person2.getPos());
         addSharingValues(person.getHaplo1(), person2.getHaplo2(), person.getPos(), person2.getPos());
 
         addSharingValues(person.getHaplo2(), person2.getHaplo1(), person.getPos(), person2.getPos());
         addSharingValues(person.getHaplo2(), person2.getHaplo2(), person.getPos(), person2.getPos());
 
-        addSharingValues(person2.getHaplo1(), person2.getHaplo2(), person2.getPos(), person2.getPos());
-
+        /*
+         * within person2 comparison
+         */
+        if (!person2.isFlag()) {
+            addSharingValues(person2.getHaplo1(), person2.getHaplo2(), person2.getPos(), person2.getPos());
+            person2.setFlag(true);
+        }
     }
 
     private void addSharingValues(Haplotype h1, Haplotype h2, int per1id, int per2id) {
