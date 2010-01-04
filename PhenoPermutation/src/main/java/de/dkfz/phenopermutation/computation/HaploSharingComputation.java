@@ -89,15 +89,15 @@ public class HaploSharingComputation {
                 "src/main/resources/mammastu.ent.chr.22.hap"));
         int permutationsize = 3;
         HaploSharingComputation pc = new HaploSharingComputation(persons, phenos, permutationsize);
-        Map<Permutator, Double> permutatorSum = pc.computeSharing(phenos, persons);
-        log.info("result:" + permutatorSum);
+        Map<Permutator, double[]> permutatorSum = pc.computeSharing(phenos, persons);
+        // log.info("result:" + permutatorSum);
 
     }
 
-    public Map<Permutator, Double> computeSharing(Phenotype[] phenos, Person[] persons) {
+    public Map<Permutator, double[]> computeSharing(Phenotype[] phenos, Person[] persons) {
         // List<Map<Permutator, Double>> result = Lists.newArrayList();
         calculateSharing();
-        Map<Permutator, Double> permutatorSum = getResult().getPermutatorSum();
+        Map<Permutator, double[]> permutatorSum = getResult().getPermutatorSum();
         return permutatorSum;
     }
 

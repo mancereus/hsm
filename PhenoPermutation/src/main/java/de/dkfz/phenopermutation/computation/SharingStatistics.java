@@ -27,22 +27,30 @@ public class SharingStatistics {
 
     private final static Logger log = LoggerFactory.getLogger(SharingStatistics.class);
 
-    private final Double m;
-    private final double[] mi;
+    private final double[] m;
+    // permutation, pos
+    private final double[][] mi;
     /**
      * Versuch den T-Test zu initialisieren LB, 09/01/03
      */
     private final static int permutationsize = 100;
     private final TDistribution t = new TDistributionImpl(permutationsize - 1);
+
+    private final int positionsize;
     private final static double zero = Math.pow(10, -16);
 
-    public SharingStatistics(Map<Permutator, Double> data) {
-        Iterator<Double> values = data.values().iterator();
+    public SharingStatistics(Map<Permutator, double[]> data) {
+        Iterator<double[]> values = data.values().iterator();
         m = values.next();
-        mi = new double[data.size() - 1];
-        int idx = 0;
+        positionsize = m.length;
+        mi = new double[positionsize][data.size()];
+        int permidx = 0;
         while (values.hasNext()) {
-            mi[idx++] = values.next();
+            double[] next = values.next();
+            for (int i = 0; i < next.length; i++) {
+                mi[i][permidx] = next[i];
+            }
+            permidx++;
         }
     }
 
@@ -57,19 +65,23 @@ public class SharingStatistics {
         Person[] persons = new HaploImporter().importHaplos(new File(filename));
         // "src/main/resources/mammastu.ent.chr.22.hap"));
         HaploSharingComputation pc = new HaploSharingComputation(persons, phenos, permutationsize);
-        Map<Permutator, Double> data = pc.computeSharing(phenos, persons);
+        Map<Permutator, double[]> data = pc.computeSharing(phenos, persons);
         SharingStatistics shst = new SharingStatistics(data);
-        log.info("M: {}", shst.getM());
-        log.info("EM: {}", shst.getEM());
-        log.info("SDM: {}", shst.getSDM());
-        log.info("TM: {}", shst.getTM());
-        log.info("PM: {}", shst.getPM());
-        shst.writeOutput(filename);
+        StringBuilder str = shst.getOutput();
+        shst.writeOutput(str.toString(), filename);
 
     }
 
-    private void writeOutput(String filename) throws MathException {
-        String output = Joiner.on(" ").join(getM(), getTM(), getPM());
+    private StringBuilder getOutput() throws MathException {
+        StringBuilder str = new StringBuilder();
+        for (int i = 0; i < getPositionsize(); i++) {
+            str.append(Joiner.on(" ").join(i, getM(i), getTM(i), getPM(i), "\n"));
+        }
+        return str;
+    }
+
+    private void writeOutput(String output, String filename) throws MathException {
+
         Iterator<String> out = Splitter.on(CharMatcher.anyOf("/.")).split(filename).iterator();
         String result = "";
         String tmp = "";
@@ -85,31 +97,35 @@ public class SharingStatistics {
         }
     }
 
-    public Double getM() {
-        return m;
+    public Double getM(int idx) {
+        return m[idx];
     }
 
-    public double[] getMi() {
-        return mi;
+    public double[] getMi(int posidx) {
+        return mi[posidx];
     }
 
-    public double getEM() {
-        return StatUtils.mean(mi);
+    public double getEM(int posidx) {
+        return StatUtils.mean(mi[posidx]);
     }
 
-    public double getSDM() {
-        return new StandardDeviation().evaluate(mi);
+    public double getSDM(int posidx) {
+        return new StandardDeviation().evaluate(mi[posidx]);
     }
 
-    public double getTM() {
-        if (getSDM() <= zero)
+    public double getTM(int idx) {
+        if (getSDM(idx) <= zero)
             return -99;
-        return (m - getEM()) / getSDM();
+        return (m[idx] - getEM(idx)) / getSDM(idx);
     }
 
-    public double getPM() throws MathException {
-        if (getSDM() <= zero)
+    public double getPM(int idx) throws MathException {
+        if (getSDM(idx) <= zero)
             return -99;
-        return 1.0 - t.cumulativeProbability(getTM());
+        return 1.0 - t.cumulativeProbability(getTM(idx));
+    }
+
+    public int getPositionsize() {
+        return positionsize;
     }
 }

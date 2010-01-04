@@ -46,14 +46,15 @@ public class PhenoResult {
         return permutators[permutationindex];
     }
 
-    public Map<Permutator, Double> getPermutatorSum() {
-        Map<Permutator, Double> res = Maps.newHashMap();
+    public Map<Permutator, double[]> getPermutatorSum() {
+        Map<Permutator, double[]> res = Maps.newHashMap();
         for (int i = 0; i < permutationsize; i++) {
-            res.put(permutators[i], 0.0);
+            double[] resarr = new double[positionsize];
             for (int j = 0; j < positionsize; j++) {
                 int arrindex = j * permutationsize + i;
-                res.put(permutators[i], res.get(permutators[i]) + result[arrindex]);
+                resarr[j] = result[arrindex];
             }
+            res.put(permutators[i], resarr);
         }
         return res;
     }
