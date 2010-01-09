@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Maps;
 
 import de.dkfz.phenopermutation.computation.Permutator;
+import de.dkfz.phenopermutation.computation.SharingCalculator;
 
 /**
  * result set contains the used permutations and all computed sums. The first
@@ -16,7 +17,7 @@ import de.dkfz.phenopermutation.computation.Permutator;
  * @author mschmitt
  * 
  */
-public class PhenoResult {
+public class PhenoResult implements Result {
     private final static Logger log = LoggerFactory.getLogger(PhenoResult.class);
 
     final double[] result;
@@ -24,9 +25,12 @@ public class PhenoResult {
     private final int permutationsize;
     private final int positionsize;
 
-    public PhenoResult(int positionsize, int permutationsize, int personsize) {
+    private final Phenotype[] phenos;
+
+    public PhenoResult(Phenotype[] phenos, int positionsize, int permutationsize, int personsize) {
         this.permutationsize = permutationsize;
         this.positionsize = positionsize;
+        this.phenos = phenos;
         permutators = new Permutator[permutationsize];
         result = new double[positionsize * permutationsize];
         // first permutation is identity
@@ -35,6 +39,25 @@ public class PhenoResult {
             permutators[j] = new Permutator(personsize);
         }
         log.info("initialize result array [{}]", result.length);
+    }
+
+    public void addSharingValues(Haplotype h1, Haplotype h2, int per1id, int per2id) {
+        // log.info("compare p1h1 p1h2");
+        SharingCalculator calc = new SharingCalculator(h1, h2);
+        for (int i = 0; i < h1.getLength(); i++) {
+            Permutator[] perms = getPermutators();
+            int sharingvalue = calc.getNextSharing();
+            for (int k = 0; k < perms.length; k++) {
+                double pheno1 = phenos[perms[k].getMappedId(per1id)].getValue() - getMu();
+                double pheno2 = phenos[perms[k].getMappedId(per2id)].getValue() - getMu();
+                addResult(i, k, sharingvalue * pheno1 * pheno2);
+            }
+        }
+    }
+
+    public double getMu() {
+        return 0.01;
+        // compute from phenos, cache
     }
 
     public void addResult(int pos, int permutation, double resvalue) {

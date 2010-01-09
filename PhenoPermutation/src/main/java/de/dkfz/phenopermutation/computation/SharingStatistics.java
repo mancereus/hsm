@@ -19,7 +19,9 @@ import com.google.common.base.Splitter;
 import com.google.common.io.Files;
 
 import de.dkfz.phenopermutation.Person;
+import de.dkfz.phenopermutation.PhenoResult;
 import de.dkfz.phenopermutation.Phenotype;
+import de.dkfz.phenopermutation.Result;
 import de.dkfz.phenopermutation.importer.HaploImporter;
 import de.dkfz.phenopermutation.importer.PhenoImporter;
 
@@ -65,7 +67,10 @@ public class SharingStatistics {
         String filename = "src/test/resources/haplotest.dat";
         Person[] persons = new HaploImporter().importHaplos(new File(filename));
         // "src/main/resources/mammastu.ent.chr.22.hap"));
-        HaploSharingComputation pc = new HaploSharingComputation(persons, phenos, permutationsize);
+        int haplosize = persons[0].getHaplo1().getLength();
+        Result result = new PhenoResult(phenos, haplosize, permutationsize, persons.length);
+
+        HaploSharingComparator pc = new HaploSharingComparator(result, persons);
         Map<Permutator, double[]> data = pc.computeSharing(phenos, persons);
         SharingStatistics shst = new SharingStatistics(data);
 
