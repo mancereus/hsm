@@ -2,17 +2,16 @@ package de.dkfz.phenopermutation.computation;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.dkfz.phenopermutation.Person;
-import de.dkfz.phenopermutation.PhenoResult;
 import de.dkfz.phenopermutation.Phenotype;
 import de.dkfz.phenopermutation.Result;
 import de.dkfz.phenopermutation.importer.HaploImporter;
 import de.dkfz.phenopermutation.importer.PhenoImporter;
+import de.dkfz.phenopermutation.statistic.test.SharingResult;
 
 public class HaploSharingComparator {
 
@@ -78,24 +77,23 @@ public class HaploSharingComparator {
                 "src/main/resources/mammastu.ent.chr.22.hap"));
         int permutationsize = 100;
         int haplosize = persons[0].getHaplo1().getLength();
-        Result result = new PhenoResult(phenos, haplosize, permutationsize, persons.length);
+        Result result = new SharingResult(phenos, haplosize, permutationsize, persons.length);
 
         HaploSharingComparator pc = new HaploSharingComparator(result, persons);
-        Map<Permutator, double[]> permutatorSum = pc.computeSharing(phenos, persons);
+        // Map<Permutator, double[]> permutatorSum = pc.computeSharing(phenos,
+        // persons);
         // log.info("result:" + permutatorSum);
 
     }
 
-    public Map<Permutator, double[]> computeSharing(Phenotype[] phenos, Person[] persons) {
-        // List<Map<Permutator, Double>> result = Lists.newArrayList();
-        calculateSharing();
-        Map<Permutator, double[]> permutatorSum = getResult().getPermutatorSum();
-        return permutatorSum;
-    }
+    // public Map<Permutator, double[]> computeSharing() {
+    // calculateSharing();
+    // return getResult().getPermutatorSum();
+    // }
 
-    private Result getResult() {
-        return result;
-
-    }
+    // private Result getResult() {
+    // return result;
+    //
+    // }
 
 }

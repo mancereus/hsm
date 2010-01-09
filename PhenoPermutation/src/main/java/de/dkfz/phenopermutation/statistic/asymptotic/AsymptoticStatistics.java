@@ -1,4 +1,4 @@
-package de.dkfz.phenopermutation.computation;
+package de.dkfz.phenopermutation.statistic.asymptotic;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,15 +19,16 @@ import com.google.common.base.Splitter;
 import com.google.common.io.Files;
 
 import de.dkfz.phenopermutation.Person;
-import de.dkfz.phenopermutation.PhenoResult;
 import de.dkfz.phenopermutation.Phenotype;
 import de.dkfz.phenopermutation.Result;
+import de.dkfz.phenopermutation.computation.HaploSharingComparator;
+import de.dkfz.phenopermutation.computation.Permutator;
 import de.dkfz.phenopermutation.importer.HaploImporter;
 import de.dkfz.phenopermutation.importer.PhenoImporter;
 
-public class SharingStatistics {
+public class AsymptoticStatistics {
 
-    private final static Logger log = LoggerFactory.getLogger(SharingStatistics.class);
+    private final static Logger log = LoggerFactory.getLogger(AsymptoticStatistics.class);
 
     private final double[] m;
     // permutation, pos
@@ -41,7 +42,7 @@ public class SharingStatistics {
     private final int positionsize;
     private final static double zero = Math.pow(10, -16);
 
-    public SharingStatistics(Map<Permutator, double[]> data) {
+    public AsymptoticStatistics(Map<Permutator, double[]> data) {
         Iterator<double[]> values = data.values().iterator();
         m = values.next();
         positionsize = m.length;
@@ -68,11 +69,11 @@ public class SharingStatistics {
         Person[] persons = new HaploImporter().importHaplos(new File(filename));
         // "src/main/resources/mammastu.ent.chr.22.hap"));
         int haplosize = persons[0].getHaplo1().getLength();
-        Result result = new PhenoResult(phenos, haplosize, permutationsize, persons.length);
+        Result<double[]> result = new AsymptoticResult(phenos, haplosize, permutationsize, persons.length);
 
         HaploSharingComparator pc = new HaploSharingComparator(result, persons);
-        Map<Permutator, double[]> data = pc.computeSharing(phenos, persons);
-        SharingStatistics shst = new SharingStatistics(data);
+        pc.calculateSharing();
+        AsymptoticStatistics shst = new AsymptoticStatistics(result.getPermutatorData());
 
         shst.writeOutput(shst.getOutput(), filename);
     }

@@ -1,4 +1,4 @@
-package de.dkfz.phenopermutation;
+package de.dkfz.phenopermutation.statistic.test;
 
 import java.util.Map;
 
@@ -7,18 +7,21 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
 
+import de.dkfz.phenopermutation.Haplotype;
+import de.dkfz.phenopermutation.Phenotype;
+import de.dkfz.phenopermutation.Result;
 import de.dkfz.phenopermutation.computation.Permutator;
 import de.dkfz.phenopermutation.computation.SharingCalculator;
 
 /**
  * result set contains the used permutations and all computed sums. The first
- * permutaion is always the identity
+ * permutation is always the identity
  * 
  * @author mschmitt
  * 
  */
-public class PhenoResult implements Result {
-    private final static Logger log = LoggerFactory.getLogger(PhenoResult.class);
+public class SharingResult implements Result<double[]> {
+    private final static Logger log = LoggerFactory.getLogger(SharingResult.class);
 
     final double[] result;
     final private Permutator[] permutators;
@@ -27,7 +30,7 @@ public class PhenoResult implements Result {
 
     private final Phenotype[] phenos;
 
-    public PhenoResult(Phenotype[] phenos, int positionsize, int permutationsize, int personsize) {
+    public SharingResult(Phenotype[] phenos, int positionsize, int permutationsize, int personsize) {
         this.permutationsize = permutationsize;
         this.positionsize = positionsize;
         this.phenos = phenos;
@@ -41,6 +44,7 @@ public class PhenoResult implements Result {
         log.info("initialize result array [{}]", result.length);
     }
 
+    @Override
     public void addSharingValues(Haplotype h1, Haplotype h2, int per1id, int per2id) {
         // log.info("compare p1h1 p1h2");
         SharingCalculator calc = new SharingCalculator(h1, h2);
@@ -55,21 +59,18 @@ public class PhenoResult implements Result {
         }
     }
 
-    public double getMu() {
+    private double getMu() {
         return 0.01;
         // compute from phenos, cache
     }
 
-    public void addResult(int pos, int permutation, double resvalue) {
+    private void addResult(int pos, int permutation, double resvalue) {
         int arrindex = pos * permutationsize + permutation;
         result[arrindex] += resvalue;
     }
 
-    public Permutator getPermutator(int permutationindex) {
-        return permutators[permutationindex];
-    }
-
-    public Map<Permutator, double[]> getPermutatorSum() {
+    @Override
+    public Map<Permutator, double[]> getPermutatorData() {
         Map<Permutator, double[]> res = Maps.newHashMap();
         for (int i = 0; i < permutationsize; i++) {
             double[] resarr = new double[positionsize];
@@ -82,6 +83,7 @@ public class PhenoResult implements Result {
         return res;
     }
 
+    @Override
     public Permutator[] getPermutators() {
         return permutators;
     }

@@ -9,9 +9,9 @@ import com.google.common.collect.Lists;
 
 import de.dkfz.phenopermutation.Haplotype;
 import de.dkfz.phenopermutation.Person;
-import de.dkfz.phenopermutation.PhenoResult;
 import de.dkfz.phenopermutation.Phenotype;
 import de.dkfz.phenopermutation.Result;
+import de.dkfz.phenopermutation.statistic.test.SharingResult;
 
 public class PhenoComputationTest {
 
@@ -46,7 +46,7 @@ public class PhenoComputationTest {
         }
         Person[] personsarr = persons.toArray(new Person[persons.size()]);
         int haplosize = personsarr[0].getHaplo1().getLength();
-        Result result = new PhenoResult(phenos, haplosize, 2, personsarr.length);
+        Result result = new SharingResult(phenos, haplosize, 2, personsarr.length);
 
         HaploSharingComparator pc = new HaploSharingComparator(result, personsarr);
         pc.calculateSharing();
