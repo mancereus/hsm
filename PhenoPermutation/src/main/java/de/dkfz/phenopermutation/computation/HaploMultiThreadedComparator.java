@@ -2,6 +2,13 @@ package de.dkfz.phenopermutation.computation;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,36 +21,63 @@ import de.dkfz.phenopermutation.importer.HaploImporter;
 import de.dkfz.phenopermutation.importer.PhenoImporter;
 import de.dkfz.phenopermutation.statistic.test.SharingResult;
 
-public class HaploSharingComparator implements HaploComparator {
+/**
+ * has some trouble
+ * 
+ * @author Matthias
+ * 
+ */
+public class HaploMultiThreadedComparator implements HaploComparator {
 
-    private final static Logger log = LoggerFactory.getLogger(HaploSharingComparator.class);
+    private final static Logger log = LoggerFactory.getLogger(HaploMultiThreadedComparator.class);
     private final Person[] persons;
     private final Result result;
+    private final ExecutorService pool;
 
-    public HaploSharingComparator(Result result, Person[] persons) {
+    public HaploMultiThreadedComparator(Result result, Person[] persons) {
         this.persons = persons;
         this.result = result;
         log
                 .info("haplolength: {} permutations: {}", persons[0].getHaplo1().getLength(),
                         result.getPermutators().length);
+        int cpus = Runtime.getRuntime().availableProcessors();
+        log.info("Number of processors available to the JVM: " + cpus);
+        pool = Executors.newFixedThreadPool(cpus);
     }
 
     @Override
     public void calculateSharing() {
-        int personSize = persons.length;
+        final int personSize = persons.length;
         long start0 = System.currentTimeMillis();
 
+        CompletionService<Long> completionService = new ExecutorCompletionService<Long>(pool);
         for (int i = 0; i < personSize - 1; i++) {
-            long start = System.currentTimeMillis();
-            Person per1 = persons[i];
-            compareWithinPersonHaplos(per1);
-            for (int j = i + 1; j < personSize; j++) {
-                Person per2 = persons[j];
-                compareBetweenPersonHaplos(per1, per2);
-                // log.info(" person(i) to person(j): {} time: {}", i + "->" +
-                // j, System.currentTimeMillis() - start);
+            final Person per1 = persons[i];
+            final int minidx = i;
+            completionService.submit(new Callable<Long>() {
+                @Override
+                public Long call() {
+                    long start = System.currentTimeMillis();
+                    compareWithinPersonHaplos(per1);
+                    for (int j = minidx + 1; j < personSize; j++) {
+                        Person per2 = persons[j];
+                        compareBetweenPersonHaplos(per1, per2);
+                    }
+                    log.info("person({}) finished: {}ms", minidx, System.currentTimeMillis() - start);
+                    return System.currentTimeMillis() - start;
+                }
+            });
+        }
+        for (int i = 0; i < personSize - 1; i++) {
+            try {
+                Future<Long> future = completionService.take();
+                Long duration = future.get();
+                log.info("finish person: {}ms", duration);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
             }
-            log.info("person({}) finished: {}ms", i, System.currentTimeMillis() - start);
         }
         // compare last person
         compareWithinPersonHaplos(persons[personSize - 1]);
@@ -81,21 +115,8 @@ public class HaploSharingComparator implements HaploComparator {
         int haplosize = persons[0].getHaplo1().getLength();
         Result result = new SharingResult(phenos, haplosize, permutationsize, persons.length);
 
-        HaploSharingComparator pc = new HaploSharingComparator(result, persons);
-        // Map<Permutator, double[]> permutatorSum = pc.computeSharing(phenos,
-        // persons);
-        // log.info("result:" + permutatorSum);
+        HaploMultiThreadedComparator pc = new HaploMultiThreadedComparator(result, persons);
 
     }
-
-    // public Map<Permutator, double[]> computeSharing() {
-    // calculateSharing();
-    // return getResult().getPermutatorSum();
-    // }
-
-    // private Result getResult() {
-    // return result;
-    //
-    // }
 
 }

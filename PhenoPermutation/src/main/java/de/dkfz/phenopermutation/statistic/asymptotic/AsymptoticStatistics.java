@@ -18,6 +18,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.io.Files;
 
+import de.dkfz.phenopermutation.HaploComparator;
 import de.dkfz.phenopermutation.Person;
 import de.dkfz.phenopermutation.Phenotype;
 import de.dkfz.phenopermutation.Result;
@@ -71,7 +72,7 @@ public class AsymptoticStatistics {
         int haplosize = persons[0].getHaplo1().getLength();
         Result<double[]> result = new AsymptoticResult(phenos, haplosize, permutationsize, persons.length);
 
-        HaploSharingComparator pc = new HaploSharingComparator(result, persons);
+        HaploComparator pc = new HaploSharingComparator(result, persons);
         pc.calculateSharing();
         AsymptoticStatistics shst = new AsymptoticStatistics(result.getPermutatorData());
 
