@@ -27,6 +27,7 @@ import de.dkfz.phenopermutation.computation.Permutator;
 import de.dkfz.phenopermutation.importer.HaploImporter;
 import de.dkfz.phenopermutation.importer.PhenoImporter;
 import de.dkfz.phenopermutation.statistic.Statistic;
+import de.dkfz.phenopermutation.statistic.asymptotic.AsymptoticResult.TYPE;
 
 public class AsymptoticStatistics implements Statistic {
 
@@ -44,11 +45,12 @@ public class AsymptoticStatistics implements Statistic {
     private final int positionsize;
     private final static double zero = Math.pow(10, -16);
 
-    public AsymptoticStatistics(Map<Permutator, double[]> data) {
-        Iterator<double[]> values = data.values().iterator();
+    public AsymptoticStatistics(Map<Permutator, double[]> dataA, Map<Permutator, double[]> dataB,
+            Map<Permutator, double[]> dataD) {
+        Iterator<double[]> values = dataA.values().iterator();
         m = values.next();
         positionsize = m.length;
-        mi = new double[positionsize][data.size()];
+        mi = new double[positionsize][dataA.size()];
         int permidx = 0;
         while (values.hasNext()) {
             double[] next = values.next();
@@ -71,11 +73,13 @@ public class AsymptoticStatistics implements Statistic {
         Person[] persons = new HaploImporter().importHaplos(new File(filename));
         // "src/main/resources/mammastu.ent.chr.22.hap"));
         int haplosize = persons[0].getHaplo1().getLength();
-        Result<double[]> result = new AsymptoticResult(phenos, haplosize, permutationsize, persons.length);
+        Result<double[], AsymptoticResult.TYPE> result = new AsymptoticResult(phenos, haplosize, permutationsize,
+                persons.length);
 
         HaploComparator pc = new HaploSharingComparator(result, persons);
         pc.calculateSharing();
-        Statistic shst = new AsymptoticStatistics(result.getPermutatorData());
+        Statistic shst = new AsymptoticStatistics(result.getPermutatorData(TYPE.A), result.getPermutatorData(TYPE.B),
+                result.getPermutatorData(TYPE.D));
 
         shst.writeOutput(filename);
     }

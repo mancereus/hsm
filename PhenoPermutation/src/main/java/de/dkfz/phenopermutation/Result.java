@@ -4,12 +4,14 @@ import java.util.Map;
 
 import de.dkfz.phenopermutation.computation.Permutator;
 
-public interface Result<T> {
+public interface Result<Res, Type> {
 
     Permutator[] getPermutators();
 
-    Map<Permutator, T> getPermutatorData();
+    // Map<Permutator, Res> getPermutatorData();
 
     void addSharingValues(Haplotype haplo1, Haplotype haplo12, int pos, int pos2);
+
+    Map<Permutator, double[]> getPermutatorData(Type type);
 
 }

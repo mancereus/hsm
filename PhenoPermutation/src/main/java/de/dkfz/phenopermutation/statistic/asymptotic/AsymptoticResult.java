@@ -15,15 +15,22 @@ import de.dkfz.phenopermutation.computation.SharingCalculator;
 
 /**
  * result set contains the used permutations and all computed sums. The first
- * permutaion is always the identity
+ * permutation is always the identity
  * 
  * @author mschmitt
  * 
  */
-public class AsymptoticResult implements Result<double[]> {
+public class AsymptoticResult implements Result<double[], AsymptoticResult.TYPE> {
     private final static Logger log = LoggerFactory.getLogger(AsymptoticResult.class);
 
+    enum TYPE {
+        A, B, D
+    };
+
     final double[] result;
+
+    // slow because of multidimensional array
+    final double[][][] tmpD;
     final private Permutator[] permutators;
     private final int permutationsize;
     private final int positionsize;
@@ -35,7 +42,9 @@ public class AsymptoticResult implements Result<double[]> {
         this.positionsize = positionsize;
         this.phenos = phenos;
         permutators = new Permutator[permutationsize];
-        result = new double[positionsize * permutationsize];
+        result = new double[positionsize * permutationsize * TYPE.values().length];
+        int haplosize = personsize * 2;
+        tmpD = new double[positionsize][permutationsize][haplosize];
         // first permutation is identity
         permutators[0] = new Permutator(personsize, true);
         for (int j = 1; j < permutationsize; j++) {
@@ -48,15 +57,21 @@ public class AsymptoticResult implements Result<double[]> {
     public void addSharingValues(Haplotype h1, Haplotype h2, int per1id, int per2id) {
         // log.info("compare p1h1 p1h2");
         SharingCalculator calc = new SharingCalculator(h1, h2);
-        for (int i = 0; i < h1.getLength(); i++) {
+        for (int pos = 0; pos < h1.getLength(); pos++) {
             Permutator[] perms = getPermutators();
             int sharingvalue = calc.getNextSharing();
-            for (int k = 0; k < perms.length; k++) {
-                double pheno1 = phenos[perms[k].getMappedId(per1id)].getValue() - getMu();
-                double pheno2 = phenos[perms[k].getMappedId(per2id)].getValue() - getMu();
-                addResult(i, k, sharingvalue * pheno1 * pheno2);
+            for (int permpos = 0; permpos < perms.length; permpos++) {
+                double pheno1 = phenos[perms[permpos].getMappedId(per1id)].getValue() - getMu();
+                double pheno2 = phenos[perms[permpos].getMappedId(per2id)].getValue() - getMu();
+                addResult(pos, permpos, sharingvalue, TYPE.A);
+                addResult(pos, permpos, sharingvalue * sharingvalue, TYPE.B);
+                addTmpD(pos, permpos, per1id, sharingvalue);
             }
         }
+    }
+
+    private void addTmpD(int pos, int permpos, int per1id, int sharingvalue) {
+        tmpD[pos][permpos][per1id] += sharingvalue;
     }
 
     private double getMu() {
@@ -64,13 +79,13 @@ public class AsymptoticResult implements Result<double[]> {
         // compute from phenos, cache
     }
 
-    private void addResult(int pos, int permutation, double resvalue) {
+    private void addResult(int pos, int permutation, double resvalue, TYPE type) {
         int arrindex = pos * permutationsize + permutation;
-        result[arrindex] += resvalue;
+        result[arrindex + type.ordinal()] += resvalue;
     }
 
     @Override
-    public Map<Permutator, double[]> getPermutatorData() {
+    public Map<Permutator, double[]> getPermutatorData(TYPE type) {
         Map<Permutator, double[]> res = Maps.newHashMap();
         for (int i = 0; i < permutationsize; i++) {
             double[] resarr = new double[positionsize];

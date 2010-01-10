@@ -27,6 +27,7 @@ import de.dkfz.phenopermutation.computation.Permutator;
 import de.dkfz.phenopermutation.importer.HaploImporter;
 import de.dkfz.phenopermutation.importer.PhenoImporter;
 import de.dkfz.phenopermutation.statistic.Statistic;
+import de.dkfz.phenopermutation.statistic.test.SharingResult.TYPE;
 
 public class SharingStatistics implements Statistic {
 
@@ -71,11 +72,12 @@ public class SharingStatistics implements Statistic {
         Person[] persons = new HaploImporter().importHaplos(new File(filename));
         // "src/main/resources/mammastu.ent.chr.22.hap"));
         int haplosize = persons[0].getHaplo1().getLength();
-        Result<double[]> result = new SharingResult(phenos, haplosize, permutationsize, persons.length);
+        Result<double[], SharingResult.TYPE> result = new SharingResult(phenos, haplosize, permutationsize,
+                persons.length);
 
         HaploComparator pc = new HaploSharingComparator(result, persons);
         pc.calculateSharing();
-        SharingStatistics shst = new SharingStatistics(result.getPermutatorData());
+        SharingStatistics shst = new SharingStatistics(result.getPermutatorData(TYPE.VAL));
 
         shst.writeOutput(filename);
     }

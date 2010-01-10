@@ -26,7 +26,7 @@ public class StatisticMain {
     @Argument(value = "pheno", alias = "p", description = "phenotype filename", required = true)
     private File pheno;
 
-    @Argument(value = "haplo", alias = "h", description = "haplotype filename", required = true)
+    @Argument(value = "haplo", alias = "h", description = "haplotype filename")
     private File haplo;
 
     @Argument(value = "permsize", alias = "ps", description = "permutationsize")
@@ -59,11 +59,11 @@ public class StatisticMain {
         Person[] persons = new HaploImporter().importHaplos(haplo);
         // "src/main/resources/mammastu.ent.chr.22.hap"));
         int haplosize = persons[0].getHaplo1().getLength();
-        Result<double[]> result = new SharingResult(phenos, haplosize, permsize, persons.length);
+        Result<double[], SharingResult.TYPE> result = new SharingResult(phenos, haplosize, permsize, persons.length);
 
         HaploComparator pc = new HaploSharingComparator(result, persons);
         pc.calculateSharing();
-        Statistic shst = new SharingStatistics(result.getPermutatorData());
+        Statistic shst = new SharingStatistics(result.getPermutatorData(SharingResult.TYPE.VAL));
         try {
             shst.writeOutput(filename);
         } catch (MathException e) {
