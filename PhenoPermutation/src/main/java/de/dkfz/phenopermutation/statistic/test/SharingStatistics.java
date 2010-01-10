@@ -26,8 +26,9 @@ import de.dkfz.phenopermutation.computation.HaploSharingComparator;
 import de.dkfz.phenopermutation.computation.Permutator;
 import de.dkfz.phenopermutation.importer.HaploImporter;
 import de.dkfz.phenopermutation.importer.PhenoImporter;
+import de.dkfz.phenopermutation.statistic.Statistic;
 
-public class SharingStatistics {
+public class SharingStatistics implements Statistic {
 
     private final static Logger log = LoggerFactory.getLogger(SharingStatistics.class);
 
@@ -76,7 +77,7 @@ public class SharingStatistics {
         pc.calculateSharing();
         SharingStatistics shst = new SharingStatistics(result.getPermutatorData());
 
-        shst.writeOutput(shst.getOutput(), filename);
+        shst.writeOutput(filename);
     }
 
     private String getOutput() throws MathException {
@@ -87,7 +88,8 @@ public class SharingStatistics {
         return str.toString();
     }
 
-    private void writeOutput(String output, String filename) throws MathException {
+    @Override
+    public void writeOutput(String filename) throws MathException {
 
         log.info("write output");
 
@@ -100,7 +102,7 @@ public class SharingStatistics {
         }
         String outfile = result;
         try {
-            Files.write(output.getBytes(), new File("src/test/resources/" + outfile + ".hsm"));
+            Files.write(getOutput().getBytes(), new File("src/test/resources/" + outfile + ".hsm"));
         } catch (IOException e) {
             e.printStackTrace();
         }

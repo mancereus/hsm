@@ -26,8 +26,9 @@ import de.dkfz.phenopermutation.computation.HaploSharingComparator;
 import de.dkfz.phenopermutation.computation.Permutator;
 import de.dkfz.phenopermutation.importer.HaploImporter;
 import de.dkfz.phenopermutation.importer.PhenoImporter;
+import de.dkfz.phenopermutation.statistic.Statistic;
 
-public class AsymptoticStatistics {
+public class AsymptoticStatistics implements Statistic {
 
     private final static Logger log = LoggerFactory.getLogger(AsymptoticStatistics.class);
 
@@ -74,9 +75,9 @@ public class AsymptoticStatistics {
 
         HaploComparator pc = new HaploSharingComparator(result, persons);
         pc.calculateSharing();
-        AsymptoticStatistics shst = new AsymptoticStatistics(result.getPermutatorData());
+        Statistic shst = new AsymptoticStatistics(result.getPermutatorData());
 
-        shst.writeOutput(shst.getOutput(), filename);
+        shst.writeOutput(filename);
     }
 
     private String getOutput() throws MathException {
@@ -87,7 +88,7 @@ public class AsymptoticStatistics {
         return str.toString();
     }
 
-    private void writeOutput(String output, String filename) throws MathException {
+    public void writeOutput(String filename) throws MathException {
 
         log.info("write output");
 
@@ -100,7 +101,7 @@ public class AsymptoticStatistics {
         }
         String outfile = result;
         try {
-            Files.write(output.getBytes(), new File("src/test/resources/" + outfile + ".hsm"));
+            Files.write(getOutput().getBytes(), new File("src/test/resources/" + outfile + ".hsm"));
         } catch (IOException e) {
             e.printStackTrace();
         }
