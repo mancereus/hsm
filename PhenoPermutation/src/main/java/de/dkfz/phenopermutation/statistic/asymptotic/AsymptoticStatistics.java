@@ -18,16 +18,8 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.io.Files;
 
-import de.dkfz.phenopermutation.HaploComparator;
-import de.dkfz.phenopermutation.Person;
-import de.dkfz.phenopermutation.Phenotype;
-import de.dkfz.phenopermutation.Result;
-import de.dkfz.phenopermutation.computation.HaploSharingComparator;
 import de.dkfz.phenopermutation.computation.Permutator;
-import de.dkfz.phenopermutation.importer.HaploImporter;
-import de.dkfz.phenopermutation.importer.PhenoImporter;
 import de.dkfz.phenopermutation.statistic.Statistic;
-import de.dkfz.phenopermutation.statistic.asymptotic.AsymptoticResult.TYPE;
 
 public class AsymptoticStatistics implements Statistic {
 
@@ -45,12 +37,13 @@ public class AsymptoticStatistics implements Statistic {
     private final int positionsize;
     private final static double zero = Math.pow(10, -16);
 
-    public AsymptoticStatistics(Map<Permutator, double[]> dataA, Map<Permutator, double[]> dataB,
-            Map<Permutator, double[]> dataD) {
-        Iterator<double[]> values = dataA.values().iterator();
+    public AsymptoticStatistics(Map<Permutator, double[]> ax, Map<Permutator, double[]> bx,
+            Map<Permutator, double[]> dx, Map<Permutator, double[]> ay, Map<Permutator, double[]> by,
+            Map<Permutator, double[]> dy) {
+        Iterator<double[]> values = ax.values().iterator();
         m = values.next();
         positionsize = m.length;
-        mi = new double[positionsize][dataA.size()];
+        mi = new double[positionsize][ax.size()];
         int permidx = 0;
         while (values.hasNext()) {
             double[] next = values.next();
@@ -59,29 +52,6 @@ public class AsymptoticStatistics implements Statistic {
             }
             permidx++;
         }
-    }
-
-    /**
-     * @param args
-     * @throws MathException
-     */
-    public static void main(String[] args) throws MathException {
-        log.info("something is working");
-        Phenotype[] phenos = new PhenoImporter().importPhenos(new File("src/test/resources/phenotest.ga"));
-        // .importPhenos(new File("src/main/resources/mammastu.pheno.ga"));
-        String filename = "src/test/resources/haplotest.dat";
-        Person[] persons = new HaploImporter().importHaplos(new File(filename));
-        // "src/main/resources/mammastu.ent.chr.22.hap"));
-        int haplosize = persons[0].getHaplo1().getLength();
-        Result<double[], AsymptoticResult.TYPE> result = new AsymptoticResult(phenos, haplosize, permutationsize,
-                persons.length);
-
-        HaploComparator pc = new HaploSharingComparator(result, persons);
-        pc.calculateSharing();
-        Statistic shst = new AsymptoticStatistics(result.getPermutatorData(TYPE.A), result.getPermutatorData(TYPE.B),
-                result.getPermutatorData(TYPE.D));
-
-        shst.writeOutput(filename);
     }
 
     private String getOutput() throws MathException {
