@@ -1,6 +1,7 @@
 package de.dkfz.phenopermutation.statistic;
 
 import java.io.File;
+import java.util.Map;
 
 import org.apache.commons.math.MathException;
 import org.slf4j.Logger;
@@ -14,6 +15,7 @@ import de.dkfz.phenopermutation.Person;
 import de.dkfz.phenopermutation.Phenotype;
 import de.dkfz.phenopermutation.Result;
 import de.dkfz.phenopermutation.computation.HaploSharingComparator;
+import de.dkfz.phenopermutation.computation.Permutator;
 import de.dkfz.phenopermutation.importer.HaploImporter;
 import de.dkfz.phenopermutation.importer.PhenoImporter;
 import de.dkfz.phenopermutation.statistic.test.SharingResult;
@@ -59,11 +61,11 @@ public class StatisticMain {
         Person[] persons = new HaploImporter().importHaplos(haplo);
         // "src/main/resources/mammastu.ent.chr.22.hap"));
         int haplosize = persons[0].getHaplo1().getLength();
-        Result<double[], SharingResult.TYPE> result = new SharingResult(phenos, haplosize, permsize, persons.length);
+        Result<Map<Permutator, double[]>> result = new SharingResult(phenos, haplosize, permsize, persons.length);
 
         HaploComparator pc = new HaploSharingComparator(result, persons);
         pc.calculateSharing();
-        Statistic shst = new SharingStatistics(result.getPermutatorData(SharingResult.TYPE.VAL));
+        Statistic shst = new SharingStatistics(result.getResult());
         try {
             shst.writeOutput(filename);
         } catch (MathException e) {

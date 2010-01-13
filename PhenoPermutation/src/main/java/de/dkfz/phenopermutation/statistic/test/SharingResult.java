@@ -20,12 +20,8 @@ import de.dkfz.phenopermutation.computation.SharingCalculator;
  * @author mschmitt
  * 
  */
-public class SharingResult implements Result<double[], SharingResult.TYPE> {
+public class SharingResult implements Result<Map<Permutator, double[]>> {
     private final static Logger log = LoggerFactory.getLogger(SharingResult.class);
-
-    public enum TYPE {
-        VAL
-    };
 
     final double[] result;
     final private Permutator[] permutators;
@@ -74,7 +70,7 @@ public class SharingResult implements Result<double[], SharingResult.TYPE> {
     }
 
     @Override
-    public Map<Permutator, double[]> getPermutatorData(TYPE type) {
+    public Map<Permutator, double[]> getResult() {
         Map<Permutator, double[]> res = Maps.newHashMap();
         for (int i = 0; i < permutationsize; i++) {
             double[] resarr = new double[positionsize];

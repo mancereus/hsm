@@ -6,59 +6,32 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.math.MathException;
-import org.apache.commons.math.distribution.TDistribution;
-import org.apache.commons.math.distribution.TDistributionImpl;
-import org.apache.commons.math.stat.StatUtils;
-import org.apache.commons.math.stat.descriptive.moment.StandardDeviation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.CharMatcher;
-import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.io.Files;
 
-import de.dkfz.phenopermutation.computation.Permutator;
 import de.dkfz.phenopermutation.statistic.Statistic;
+import de.dkfz.phenopermutation.statistic.asymptotic.AsymptoticResult.TYPE;
 
 public class AsymptoticStatistics implements Statistic {
 
     private final static Logger log = LoggerFactory.getLogger(AsymptoticStatistics.class);
 
-    private final double[] m;
-    // permutation, pos
-    private final double[][] mi;
-    /**
-     * Versuch den T-Test zu initialisieren LB, 09/01/03
-     */
-    private final static int permutationsize = 100;
-    private final TDistribution t = new TDistributionImpl(permutationsize - 1);
+    private final Map<TYPE, Object> result;
 
-    private final int positionsize;
-    private final static double zero = Math.pow(10, -16);
-
-    public AsymptoticStatistics(Map<Permutator, double[]> ax, Map<Permutator, double[]> bx,
-            Map<Permutator, double[]> dx, Map<Permutator, double[]> ay, Map<Permutator, double[]> by,
-            Map<Permutator, double[]> dy) {
-        Iterator<double[]> values = ax.values().iterator();
-        m = values.next();
-        positionsize = m.length;
-        mi = new double[positionsize][ax.size()];
-        int permidx = 0;
-        while (values.hasNext()) {
-            double[] next = values.next();
-            for (int i = 0; i < next.length; i++) {
-                mi[i][permidx] = next[i];
-            }
-            permidx++;
-        }
+    public AsymptoticStatistics(Map<AsymptoticResult.TYPE, Object> result) {
+        this.result = result;
     }
 
     private String getOutput() throws MathException {
         StringBuilder str = new StringBuilder();
-        for (int i = 0; i < getPositionsize(); i++) {
-            str.append(Joiner.on(" ").join(i, getM(i), getTM(i), getPM(i), "\n"));
-        }
+        // for (int i = 0; i < getAx().; i++) {
+        // str.append(Joiner.on(" ").join(i, getM(i), getTM(i), getPM(i),
+        // "\n"));
+        // }
         return str.toString();
     }
 
@@ -81,35 +54,57 @@ public class AsymptoticStatistics implements Statistic {
         }
     }
 
-    public Double getM(int idx) {
-        return m[idx];
+    public double getAx(int pos) {
+        return ((double[]) result.get(TYPE.Ax))[pos];
     }
 
-    public double[] getMi(int posidx) {
-        return mi[posidx];
+    public double getBx(int pos) {
+        return ((double[]) result.get(TYPE.Bx))[pos];
     }
 
-    public double getEM(int posidx) {
-        return StatUtils.mean(mi[posidx]);
+    public double getDx(int pos) {
+        return ((double[]) result.get(TYPE.Dx))[pos];
     }
 
-    public double getSDM(int posidx) {
-        return new StandardDeviation().evaluate(mi[posidx]);
+    public Double getAy() {
+        return (Double) result.get(TYPE.Ay);
     }
 
-    public double getTM(int idx) {
-        if (getSDM(idx) <= zero)
-            return -99;
-        return (m[idx] - getEM(idx)) / getSDM(idx);
+    public Double getBy() {
+        return (Double) result.get(TYPE.By);
     }
 
-    public double getPM(int idx) throws MathException {
-        if (getSDM(idx) <= zero)
-            return -99;
-        return 1.0 - t.cumulativeProbability(getTM(idx));
+    public double getDy(int permpos) {
+        return ((double[]) result.get(TYPE.Dy))[permpos];
     }
 
-    public int getPositionsize() {
-        return positionsize;
+    /*
+     * Gx := Ax*Ax Hx := Dx – Bx Kx := Gx + 2*Bx – 4*Dx
+     * 
+     * Gy := Ay*Ay Hy := Dy – By Ky := Gy + 2*By – 4*Dy
+     */
+
+    public double getGx(int pos) {
+        return getAx(pos) * getAx(pos);
+    }
+
+    public double getHx(int pos) {
+        return getDx(pos) - getBx(pos);
+    }
+
+    public double getKx(int pos) {
+        return getGx(pos) + 2 * getBx(pos) - 4 * getDx(pos);
+    }
+
+    public double getGy() {
+        return getAy() * getAy();
+    }
+
+    public double getHy(int permpos) {
+        return getDy(permpos) - getBy();
+    }
+
+    public double getKy(int permpos) {
+        return getGy() + 2 * getBy() - 4 * getDy(permpos);
     }
 }
