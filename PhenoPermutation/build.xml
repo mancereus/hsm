@@ -35,7 +35,7 @@
 
 	<!-- build and dist -->
 	<target name="build" depends="init">
-		<javac classpathref="classpath.build" srcdir="${src}" destdir="${build}">
+		<javac optimize="true" classpathref="classpath.build" srcdir="${src}" destdir="${build}">
 		</javac>
 	</target>
 
@@ -67,9 +67,22 @@
 	</target>
 
 	<!-- run -->
-	<target name="run" depends="dist" description="test all methods">
-		<java classpathref="classpath.run" classname="de.dkfz.phenocomputation.PhenoComputation">
+	<target name="run" depends="dist" description="run the application">
+		<echo>will write log to run.log.</echo>
+
+		<property name="pheno" value="src/test/resources/phenotest.ga" />
+		<property name="haplo" value="src/test/resources/haplotest.dat" />
+		<property name="permsize" value="1000" />
+		<property name="maxmem" value="756m" />
+		<echo>pheno: ${pheno}</echo>
+		<echo>haplo: ${haplo}</echo>
+		<echo>permutations: ${permsize}</echo>
+		<echo>max memory: ${maxmem}</echo>
+		<echo>running...</echo>
+		<java fork="true" maxmemory="${maxmem}" output="run.log" dir="." classpathref="classpath.run" classname="de.dkfz.phenopermutation.statistic.StatisticMain">
+			<arg line="-p ${pheno} -h ${haplo} -ps ${permsize}" />
 		</java>
+		<echo>run finished.</echo>
 	</target>
 
 </project>
