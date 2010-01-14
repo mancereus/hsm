@@ -65,9 +65,9 @@ public class SharingStatistics implements Statistic {
      */
     public static void main(String[] args) throws MathException {
         log.info("something is working");
-        Phenotype[] phenos = new PhenoImporter().importPhenos(new File("src/test/resources/phenotest.ga"));
+        Phenotype[] phenos = new PhenoImporter().importPhenos(new File("test/hsm.pheno"));
         // .importPhenos(new File("src/main/resources/mammastu.pheno.ga"));
-        String filename = "src/test/resources/haplotest.dat";
+        String filename = "test/hsm.hap";
         Person[] persons = new HaploImporter().importHaplos(new File(filename));
         // "src/main/resources/mammastu.ent.chr.22.hap"));
         int haplosize = persons[0].getHaplo1().getLength();
@@ -91,8 +91,6 @@ public class SharingStatistics implements Statistic {
     @Override
     public void writeOutput(String filename) throws MathException {
 
-        log.info("write output");
-
         Iterator<String> out = Splitter.on(CharMatcher.anyOf("/.")).split(filename).iterator();
         String result = "";
         String tmp = "";
@@ -102,7 +100,9 @@ public class SharingStatistics implements Statistic {
         }
         String outfile = result;
         try {
-            Files.write(getOutput().getBytes(), new File("src/test/resources/" + outfile + ".hsm"));
+            String outfilename = "test/" + outfile + ".out";
+            log.info("write output to {}", outfilename);
+            Files.write(getOutput().getBytes(), new File(outfilename));
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -67,7 +67,7 @@ public class StatisticMain {
         pc.calculateSharing();
         Statistic shst = new SharingStatistics(result.getResult());
         try {
-            shst.writeOutput(filename);
+            shst.writeOutput(haplo.getName());
         } catch (MathException e) {
             e.printStackTrace();
         }
