@@ -1,0 +1,148 @@
+Basiswerte
+Phaenotypen:
+pheno(1) = 0
+pheno(2) = 1
+pheno(3) = 1
+mu       = 0.666666666666667
+
+ Matrix mit paarweisen Vergleichen
+
+ Matrix kuenstlich aufgeblaeht da zu jedem haplotypen ein Phaenotyp gehoert
+
+ID1_1 ID1_2 ID2_1 ID2_2 ID3_1 ID3_2
+ID1_1 0 0.444444444444444 -0.222222222222222 -0.222222222222222 -0.222222222222222 -0.222222222222222
+ID1_2 0.444444444444444 0 -0.222222222222222 -0.222222222222222 -0.222222222222222 -0.222222222222222
+ID2_1 -0.222222222222222 -0.222222222222222 0 0.111111111111111 0.111111111111111 0.111111111111111
+ID2_2 -0.222222222222222 -0.222222222222222 0.111111111111111 0 0.111111111111111 0.111111111111111
+ID3_1 -0.222222222222222 -0.222222222222222 0.111111111111111 0.111111111111111 0 0.111111111111111
+ID3_2 -0.222222222222222 -0.222222222222222 0.111111111111111 0.111111111111111 0.111111111111111 0
+
+
+Haplotypen:
+
+H11: 11111
+H12: 11111
+H21: 01011
+H22: 00101
+H31: 11110
+H32: 10001
+
+Sharing-Werte:
+
+Die Werte werden als Matrizen dargestellt:
+ Hij: Vergleich i. Haplotype mit j. Haplotyp an der jeweiligen Position
+
+
+
+Position 1
+
+H1 H2 H3 H4 H5 H6
+H1 0 5 0 0 4 1
+H2 5 0 0 0 4 1
+H3 0 0 0 1 0 0
+H4 0 0 1 0 0 0
+H5 4 4 0 0 0 1
+H6 1 1 0 0 1 0
+
+Position 2
+
+H1 H2 H3 H4 H5 H6
+H1 0 5 1 0 4 0
+H2 5 0 1 0 4 0
+H3 1 1 0 0 1 0
+H4 0 0 0 0 0 1
+H5 4 4 1 0 0 0
+H6 0 0 0 1 0 0
+
+Position 3
+
+H1 H2 H3 H4 H5 H6
+H1 0 5 0 1 4 0
+H2 5 0 0 1 4 0
+H3 0 0 0 0 0 1
+H4 1 1 0 0 1 0
+H5 4 4 0 1 0 0
+H6 0 0 1 0 0 0
+
+Position 4
+
+H1 H2 H3 H4 H5 H6
+H1 0 5 2 0 4 0
+H2 5 0 2 0 4 0
+H3 2 2 0 0 1 0
+H4 0 0 0 0 0 2
+H5 4 4 1 0 0 0
+H6 0 0 0 2 0 0
+
+Position 5
+
+H1 H2 H3 H4 H5 H6
+H1 0 5 2 1 0 1
+H2 5 0 2 1 0 1
+H3 2 2 0 1 0 1
+H4 1 1 1 0 0 2
+H5 0 0 0 0 0 0
+H6 1 1 1 2 0 0
+
+Alternative Darstellung
+
+1. Haplotyp 11111
+2. Haplotyp 11111
+Sharing     55555
+
+1. Haplotyp 11111
+3. Haplotyp 01011
+Sharing     01022
+
+1. Haplotyp 11111
+4. Haplotyp 00101
+Sharing     00101
+
+1. Haplotyp 11111
+5. Haplotyp 11110
+Sharing     44440
+
+1. Haplotyp 11111
+6. Haplotyp 10001
+Sharing     10001
+
+2. Haplotyp 11111
+3. Haplotyp 01011
+Sharing     01022
+
+2. Haplotyp 11111
+4. Haplotyp 00101
+Sharing     00101
+
+2. Haplotyp 11111
+5. Haplotyp 11110
+Sharing     44440
+
+2. Haplotyp 11111
+6. Haplotyp 10001
+Sharing     10001
+
+3. Haplotyp 01011
+4. Haplotyp 00101
+Sharing     10001
+
+3. Haplotyp 01011
+5. Haplotyp 11110
+Sharing     01010
+
+3. Haplotyp 01011
+6. Haplotyp 10001
+Sharing     00101
+
+4. Haplotyp 00101
+5. Haplotyp 11110
+Sharing     00100
+
+4. Haplotyp 00101
+6. Haplotyp 10001
+Sharing     01022
+
+5. Haplotyp 11110
+6. Haplotyp 10001
+Sharing     10000
+

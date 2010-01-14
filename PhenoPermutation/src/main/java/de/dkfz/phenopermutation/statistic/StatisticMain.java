@@ -32,7 +32,7 @@ public class StatisticMain {
     private File haplo;
 
     @Argument(value = "permsize", alias = "ps", description = "permutationsize")
-    private final Integer permsize = Integer.valueOf(100);
+    private final Integer permsize = Integer.valueOf(10);
 
     public StatisticMain() {
     }
@@ -52,10 +52,12 @@ public class StatisticMain {
 
     private void compute() {
         if (pheno == null)
-            pheno = new File("src/test/resources/phenotest.ga");
+            pheno = new File("test/hsm.pheno");
+        // pheno = new File("src/test/resources/phenotest.ga");
         Phenotype[] phenos = new PhenoImporter().importPhenos(pheno);
         // .importPhenos(new File("src/main/resources/mammastu.pheno.ga"));
-        String filename = "src/test/resources/haplotest.dat";
+        String filename = "test/hsm.haplo";
+        // String filename = "src/test/resources/haplotest.dat";
         if (haplo == null)
             haplo = new File(filename);
         Person[] persons = new HaploImporter().importHaplos(haplo);

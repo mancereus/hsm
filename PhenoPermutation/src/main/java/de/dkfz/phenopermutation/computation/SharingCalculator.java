@@ -22,11 +22,17 @@ public class SharingCalculator {
         BitSet haplotmp = (BitSet) haplo1.clone();
         haplotmp.xor(haplo2);
         // haplotmp.get(i) == 0 : match auf pos i
+        for (int i = 0; i < haplo1.length(); i++) {
+
+            System.out.println(haplo1.get(i) + " " + haplo2.get(i) + " " + haplotmp.get(i));
+
+        }
+
         compDiffs = haplotmp;
         minpos = -1;
         indx = 0;
-        maxpos = getNextDiff(indx);
         length = haplo1.getLength();
+        maxpos = getNextDiff(indx);
     }
 
     private int getNextDiff(int indx) {

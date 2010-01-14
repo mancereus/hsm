@@ -54,13 +54,13 @@ public class SharingResult implements Result<Map<Permutator, double[]>> {
             for (int k = 0; k < perms.length; k++) {
                 double pheno1 = phenos[perms[k].getMappedId(per1id)].getValue() - getMu();
                 double pheno2 = phenos[perms[k].getMappedId(per2id)].getValue() - getMu();
-                addResult(i, k, sharingvalue * pheno1 * pheno2);
+                addResult(i, k, 2 * sharingvalue * pheno1 * pheno2);
             }
         }
     }
 
     private double getMu() {
-        return 0.01;
+        return 0.66666666666666666666666666666;
         // compute from phenos, cache
     }
 

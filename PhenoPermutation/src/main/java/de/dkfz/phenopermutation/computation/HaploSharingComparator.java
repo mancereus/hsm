@@ -36,9 +36,11 @@ public class HaploSharingComparator implements HaploComparator {
         for (int i = 0; i < personSize - 1; i++) {
             long start = System.currentTimeMillis();
             Person per1 = persons[i];
+            System.out.println("Person " + i);
             compareWithinPersonHaplos(per1);
             for (int j = i + 1; j < personSize; j++) {
                 Person per2 = persons[j];
+                System.out.println("        Person " + j);
                 compareBetweenPersonHaplos(per1, per2);
                 // log.info(" person(i) to person(j): {} time: {}", i + "->" +
                 // j, System.currentTimeMillis() - start);

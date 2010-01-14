@@ -1,0 +1,95 @@
+Werte fuer den asymptotischen Mantel-Test
+
+Werte fuer Y:
+
+Ay = -1.33333333333333
+By = 1.33333333333333
+Dy = 0.444444444444445
+Gy = 1.77777777777778
+Hy = -0.888888888888889
+Ky = 2.66666666666667
+
+Asymptotic Mantel statistic an Position 1
+
+M = 0.444444444444444
+E = -1.51111111111111
+V = 5.24246913580247
+t = 0.854087207814944
+p = 0.216031323587275
+
+Zwischenwerte:
+
+Ax = 34
+Bx = 122
+Dx = 292
+Gx = 1156
+Hx = 170
+Kx = 232
+
+Asymptotic Mantel statistic an Position 2
+
+M = 0.444444444444444
+E = -1.51111111111111
+V = 5.24246913580247
+t = 0.854087207814944
+p = 0.216031323587275
+
+Zwischenwerte:
+
+Ax = 34
+Bx = 122
+Dx = 292
+Gx = 1156
+Hx = 170
+Kx = 232
+
+Asymptotic Mantel statistic an Position 3
+
+M = 0.444444444444444
+E = -1.51111111111111
+V = 5.24246913580247
+t = 0.854087207814944
+p = 0.216031323587275
+
+Zwischenwerte:
+
+Ax = 34
+Bx = 122
+Dx = 292
+Gx = 1156
+Hx = 170
+Kx = 232
+
+Asymptotic Mantel statistic an Position 4
+
+M = -0.222222222222222
+E = -1.77777777777778
+V = 6.26172839506173
+t = 0.621639229159714
+p = 0.280710927975431
+
+Zwischenwerte:
+
+Ax = 40
+Bx = 140
+Dx = 356
+Gx = 1600
+Hx = 216
+Kx = 456
+
+Asymptotic Mantel statistic an Position 5
+
+M = 1.77777777777778
+E = -1.51111111111111
+V = 3.04987654320988
+t = 1.88325041466936
+p = 0.0591907535776563
+
+Zwischenwerte:
+
+Ax = 34
+Bx = 86
+Dx = 248
+Gx = 1156
+Hx = 162
+Kx = 336
