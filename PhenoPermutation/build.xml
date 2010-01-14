@@ -35,7 +35,8 @@
 
 	<!-- build and dist -->
 	<target name="build" depends="init">
-		<javac optimize="true" classpathref="classpath.build" srcdir="${src}" destdir="${build}">
+		<echoproperties prefix="java"></echoproperties>
+		<javac source="1.6" optimize="true" classpathref="classpath.build" srcdir="${src}" destdir="${build}">
 		</javac>
 	</target>
 
