@@ -30,27 +30,27 @@ public class AsymptoticResult implements Result<Map<AsymptoticResult.TYPE, Objec
         Ax, Bx, Dx, Ay, By, Dy
     };
 
+    // position
     final double[] ax;
     final double[] bx;
     final double[] dx;
     double ay;
     double by;
-    final double[] dy;
+    double dy;
 
     final Map<TYPE, Object> result = Maps.newEnumMap(TYPE.class);
 
     final private Permutator[] permutators;
-    private final int permutationsize;
     private final int positionsize;
 
     private final Phenotype[] phenos;
 
     private final int personsize;
     private Matrix tmpDx;
-    private Matrix tmpDy;
+    private double[] tmpDy;
+    private final Matrix m;
 
     public AsymptoticResult(Phenotype[] phenos, int positionsize, int permutationsize, int personsize) {
-        this.permutationsize = permutationsize;
         this.positionsize = positionsize;
         this.personsize = personsize;
         this.phenos = phenos;
@@ -58,13 +58,14 @@ public class AsymptoticResult implements Result<Map<AsymptoticResult.TYPE, Objec
         ax = new double[positionsize];
         bx = new double[positionsize];
         dx = new double[positionsize];
-        dy = new double[permutationsize];
 
         // first permutation is identity
         permutators[0] = new Permutator(personsize, true);
         for (int j = 1; j < permutationsize; j++) {
             permutators[j] = new Permutator(personsize);
         }
+        m = MatrixFactory.dense(ValueType.DOUBLE, positionsize, permutationsize);
+
     }
 
     @Override
@@ -79,13 +80,13 @@ public class AsymptoticResult implements Result<Map<AsymptoticResult.TYPE, Objec
 
         int haplosize = personsize * 2;
         tmpDx = MatrixFactory.dense(ValueType.DOUBLE, positionsize, haplosize);
-        tmpDy = MatrixFactory.dense(ValueType.DOUBLE, permutationsize, haplosize);
+        tmpDy = new double[haplosize];
 
         for (int permpos = 0; permpos < perms.length; permpos++) {
             double permpheno1 = phenos[perms[permpos].getMappedId(per1id)].getValue() - getMu();
             double permpheno2 = phenos[perms[permpos].getMappedId(per2id)].getValue() - getMu();
-            double oldvalue = tmpDy.getAsDouble(permpos, per2id);
-            tmpDy.setAsDouble(oldvalue + permpheno1 * permpheno2, permpos, per2id + (h2.isHaplo2() ? personsize : 0));
+            double oldvalue = tmpDy[per2id];
+            m.setAsDouble(oldvalue + permpheno1 * permpheno2, per2id + (h2.isHaplo2() ? personsize : 0), permpos);
         }
         for (int pos = 0; pos < h1.getLength(); pos++) {
             int sharingvalue = calc.getNextSharing();
@@ -97,9 +98,7 @@ public class AsymptoticResult implements Result<Map<AsymptoticResult.TYPE, Objec
         for (int pos = 0; pos < h1.getLength(); pos++) {
             dx[pos] = getRowSumSquareDx(pos);
         }
-        for (int permpos = 0; permpos < perms.length; permpos++) {
-            dy[permpos] = getRowSumSquareDy(permpos);
-        }
+        dy = getRowSumSquareDy();
         result.put(TYPE.Ax, ax);
         result.put(TYPE.Bx, bx);
         result.put(TYPE.Dx, dx);
@@ -119,11 +118,11 @@ public class AsymptoticResult implements Result<Map<AsymptoticResult.TYPE, Objec
         return rowsum * rowsum;
     }
 
-    private double getRowSumSquareDy(int perm) {
+    private double getRowSumSquareDy() {
         double rowsum = 0.0;
         for (int i = 0; i < personsize; i++) {
             // add haplo1 and haplo2;
-            rowsum += tmpDy.getAsDouble(perm, i) + tmpDy.getAsDouble(perm, personsize + i);
+            rowsum += tmpDy[i] + tmpDy[personsize + i];
         }
         // square
         return rowsum * rowsum;

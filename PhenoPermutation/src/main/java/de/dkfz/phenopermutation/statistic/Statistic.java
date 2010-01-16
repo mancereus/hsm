@@ -6,4 +6,10 @@ public interface Statistic {
 
     void writeOutput(String filename) throws MathException;
 
+    double getT(int pos);
+
+    double getSDM(int posidx);
+
+    double getEM(int posidx);
+
 }

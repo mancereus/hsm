@@ -83,7 +83,11 @@ public class SharingStatistics implements Statistic {
     private String getOutput() throws MathException {
         StringBuilder str = new StringBuilder();
         for (int i = 0; i < getPositionsize(); i++) {
-            str.append(Joiner.on(" ").join(i, getM(i), getTM(i), getPM(i), "\n"));
+            str.append(Joiner.on(" ").join(i, getM(i), getT(i), getPM(i), "\n"));
+            if (getT(i) < 0.0000001) {
+                log.info("pos {} is significant: {}", i, getT(i));
+            }
+
         }
         return str.toString();
     }
@@ -116,15 +120,18 @@ public class SharingStatistics implements Statistic {
         return mi[posidx];
     }
 
+    @Override
     public double getEM(int posidx) {
         return StatUtils.mean(mi[posidx]);
     }
 
+    @Override
     public double getSDM(int posidx) {
         return new StandardDeviation().evaluate(mi[posidx]);
     }
 
-    public double getTM(int idx) {
+    @Override
+    public double getT(int idx) {
         if (getSDM(idx) <= zero)
             return -99;
         return (m[idx] - getEM(idx)) / getSDM(idx);
@@ -133,10 +140,11 @@ public class SharingStatistics implements Statistic {
     public double getPM(int idx) throws MathException {
         if (getSDM(idx) <= zero)
             return -99;
-        return 1.0 - t.cumulativeProbability(getTM(idx));
+        return 1.0 - t.cumulativeProbability(getT(idx));
     }
 
     public int getPositionsize() {
         return positionsize;
     }
+
 }
