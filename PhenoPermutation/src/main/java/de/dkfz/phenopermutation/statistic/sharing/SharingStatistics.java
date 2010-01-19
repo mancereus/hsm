@@ -1,4 +1,4 @@
-package de.dkfz.phenopermutation.statistic.test;
+package de.dkfz.phenopermutation.statistic.sharing;
 
 import java.io.File;
 import java.io.IOException;

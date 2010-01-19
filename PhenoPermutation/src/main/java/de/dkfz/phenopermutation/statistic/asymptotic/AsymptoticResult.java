@@ -4,13 +4,11 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.ujmp.core.Matrix;
-import org.ujmp.core.MatrixFactory;
-import org.ujmp.core.enums.ValueType;
 
 import com.google.common.collect.Maps;
 
 import de.dkfz.phenopermutation.Haplotype;
+import de.dkfz.phenopermutation.Person;
 import de.dkfz.phenopermutation.Phenotype;
 import de.dkfz.phenopermutation.Result;
 import de.dkfz.phenopermutation.computation.Permutator;
@@ -27,7 +25,7 @@ public class AsymptoticResult implements Result<Map<AsymptoticResult.TYPE, Objec
     private final static Logger log = LoggerFactory.getLogger(AsymptoticResult.class);
 
     public enum TYPE {
-        Ax, Bx, Dx, Ay, By, Dy
+        Ax, Bx, Dx, Ay, By, Dy, M
     };
 
     // position
@@ -46,9 +44,9 @@ public class AsymptoticResult implements Result<Map<AsymptoticResult.TYPE, Objec
     private final Phenotype[] phenos;
 
     private final int personsize;
-    private Matrix tmpDx;
+    private double[][] tmpDx;
     private double[] tmpDy;
-    private final Matrix m;
+    private final double[][] m;
 
     public AsymptoticResult(Phenotype[] phenos, int positionsize, int permutationsize, int personsize) {
         this.positionsize = positionsize;
@@ -58,13 +56,47 @@ public class AsymptoticResult implements Result<Map<AsymptoticResult.TYPE, Objec
         ax = new double[positionsize];
         bx = new double[positionsize];
         dx = new double[positionsize];
+        tmpDx = new double[positionsize][personsize * 2];
+        tmpDy = new double[personsize * 2];
+        m = new double[positionsize][permutationsize];
+        result.put(TYPE.Ax, ax);
+        result.put(TYPE.Bx, bx);
+        result.put(TYPE.Dx, dx);
+        result.put(TYPE.Ay, ay);
+        result.put(TYPE.By, by);
+        result.put(TYPE.Dy, dy);
+        result.put(TYPE.M, m);
 
         // first permutation is identity
         permutators[0] = new Permutator(personsize, true);
         for (int j = 1; j < permutationsize; j++) {
             permutators[j] = new Permutator(personsize);
         }
-        m = MatrixFactory.dense(ValueType.DOUBLE, positionsize, permutationsize);
+
+    }
+
+    @Override
+    public void comparePersons(Person person, Person person2) {
+        double pheno1 = phenos[person.getPos()].getValue() - getMu();
+        double pheno2 = phenos[person2.getPos()].getValue() - getMu();
+        ay += pheno1 * pheno2 * 2;
+        by += pheno1 * pheno2 * pheno1 * pheno2 * 2;
+        tmpDy[person.getPos()] += pheno1 * pheno2;
+        tmpDy[person2.getPos()] += pheno1 * pheno2;
+        tmpDy[person.getPos() + personsize] += pheno1 * pheno2;
+        tmpDy[person2.getPos() + personsize] += pheno1 * pheno2;
+    }
+
+    @Override
+    public void finalizePersonRow(Person per1) {
+        // nothing to do
+        dy += getRowSumSquareDy(per1);
+        tmpDy = new double[personsize * 2];
+
+        for (int pos = 0; pos < positionsize; pos++) {
+            dx[pos] += getRowSumSquareDx(per1, pos);
+        }
+        tmpDx = new double[positionsize][personsize * 2];
 
     }
 
@@ -73,59 +105,32 @@ public class AsymptoticResult implements Result<Map<AsymptoticResult.TYPE, Objec
         // log.info("compare p1h1 p1h2");
         SharingCalculator calc = new SharingCalculator(h1, h2);
         Permutator[] perms = getPermutators();
-        double pheno1 = phenos[per1id].getValue() - getMu();
-        double pheno2 = phenos[per2id].getValue() - getMu();
-        ay += pheno1 * pheno2 * 2;
-        by += pheno1 * pheno2 * pheno1 * pheno2 * 2;
 
-        int haplosize = personsize * 2;
-        tmpDx = MatrixFactory.dense(ValueType.DOUBLE, positionsize, haplosize);
-        tmpDy = new double[haplosize];
-
-        for (int permpos = 0; permpos < perms.length; permpos++) {
-            double permpheno1 = phenos[perms[permpos].getMappedId(per1id)].getValue() - getMu();
-            double permpheno2 = phenos[perms[permpos].getMappedId(per2id)].getValue() - getMu();
-            double oldvalue = tmpDy[per2id];
-            m.setAsDouble(oldvalue + permpheno1 * permpheno2, per2id + (h2.isHaplo2() ? personsize : 0), permpos);
-        }
         for (int pos = 0; pos < h1.getLength(); pos++) {
             int sharingvalue = calc.getNextSharing();
             ax[pos] += sharingvalue;
             bx[pos] += sharingvalue * sharingvalue;
-            double oldvalue = tmpDx.getAsDouble(pos, per1id);
-            tmpDx.setAsDouble(oldvalue + sharingvalue, pos, per1id + (h1.isHaplo2() ? personsize : 0));
+            tmpDx[pos][per1id + (h1.isHaplo2() ? personsize : 0)] += sharingvalue;
+            tmpDx[pos][per2id + (h2.isHaplo2() ? personsize : 0)] += sharingvalue;
+            for (int permpos = 0; permpos < perms.length; permpos++) {
+                double permpheno1 = phenos[perms[permpos].getMappedId(per1id)].getValue() - getMu();
+                double permpheno2 = phenos[perms[permpos].getMappedId(per2id)].getValue() - getMu();
+                m[per2id + (h2.isHaplo2() ? personsize : 0)][permpos] += sharingvalue + permpheno1 * permpheno2;
+            }
         }
-        for (int pos = 0; pos < h1.getLength(); pos++) {
-            dx[pos] = getRowSumSquareDx(pos);
-        }
-        dy = getRowSumSquareDy();
-        result.put(TYPE.Ax, ax);
-        result.put(TYPE.Bx, bx);
-        result.put(TYPE.Dx, dx);
-        result.put(TYPE.Ay, ay);
-        result.put(TYPE.By, by);
-        result.put(TYPE.Dy, dy);
 
     }
 
-    private double getRowSumSquareDx(int pos) {
-        double rowsum = 0.0;
-        for (int i = 0; i < personsize; i++) {
-            // add haplo1 and haplo2;
-            rowsum += tmpDx.getAsDouble(pos, i) + tmpDx.getAsDouble(pos, personsize + i);
-        }
-        // square
-        return rowsum * rowsum;
+    private double getRowSumSquareDx(Person per1, int pos) {
+        double row1 = tmpDx[pos][per1.getPos()];
+        double row2 = tmpDx[pos][personsize + per1.getPos()];
+        return row1 * row1 + row2 * row2;
     }
 
-    private double getRowSumSquareDy() {
-        double rowsum = 0.0;
-        for (int i = 0; i < personsize; i++) {
-            // add haplo1 and haplo2;
-            rowsum += tmpDy[i] + tmpDy[personsize + i];
-        }
-        // square
-        return rowsum * rowsum;
+    private double getRowSumSquareDy(Person per1) {
+        double row1 = tmpDy[per1.getPos()];
+        double row2 = tmpDy[per1.getPos() + personsize];
+        return row1 * row1 + row2 * row2;
     }
 
     private double getMu() {

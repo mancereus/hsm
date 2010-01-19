@@ -1,4 +1,4 @@
-package de.dkfz.phenopermutation.statistic.test;
+package de.dkfz.phenopermutation.statistic.sharing;
 
 import java.util.Map;
 
@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Maps;
 
 import de.dkfz.phenopermutation.Haplotype;
+import de.dkfz.phenopermutation.Person;
 import de.dkfz.phenopermutation.Phenotype;
 import de.dkfz.phenopermutation.Result;
 import de.dkfz.phenopermutation.computation.Permutator;
@@ -42,6 +43,16 @@ public class SharingResult implements Result<Map<Permutator, double[]>> {
             permutators[j] = new Permutator(personsize);
         }
         log.info("initialize result array [{}]", result.length);
+    }
+
+    @Override
+    public void comparePersons(Person person, Person person2) {
+        // nothing to do
+    }
+
+    @Override
+    public void finalizePersonRow(Person per1) {
+        // nothing to do
     }
 
     @Override

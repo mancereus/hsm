@@ -25,8 +25,11 @@ public class AsymptoticStatistics implements Statistic {
 
     private int haplosize;
 
+    private final double[][] m;
+
     public AsymptoticStatistics(Map<AsymptoticResult.TYPE, Object> result) {
         this.result = result;
+        m = ((double[][]) result.get(TYPE.M));
     }
 
     private String getOutput() throws MathException {
@@ -138,8 +141,7 @@ public class AsymptoticStatistics implements Statistic {
     }
 
     private double getM(int pos) {
-        // FIXME: compute M
-        return 0;
+        return m[pos][0];
     }
 
     /*

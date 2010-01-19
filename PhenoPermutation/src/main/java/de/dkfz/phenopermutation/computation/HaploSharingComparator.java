@@ -12,7 +12,7 @@ import de.dkfz.phenopermutation.Phenotype;
 import de.dkfz.phenopermutation.Result;
 import de.dkfz.phenopermutation.importer.HaploImporter;
 import de.dkfz.phenopermutation.importer.PhenoImporter;
-import de.dkfz.phenopermutation.statistic.test.SharingResult;
+import de.dkfz.phenopermutation.statistic.sharing.SharingResult;
 
 public class HaploSharingComparator implements HaploComparator {
 
@@ -45,6 +45,7 @@ public class HaploSharingComparator implements HaploComparator {
                 // log.info(" person(i) to person(j): {} time: {}", i + "->" +
                 // j, System.currentTimeMillis() - start);
             }
+            result.finalizePersonRow(per1);
             log.info("person({}) finished: {}ms", i, System.currentTimeMillis() - start);
         }
         // compare last person
@@ -56,6 +57,7 @@ public class HaploSharingComparator implements HaploComparator {
         /*
          * between person comparisons
          */
+        result.comparePersons(person, person2);
         result.addSharingValues(person.getHaplo1(), person2.getHaplo1(), person.getPos(), person2.getPos());
         result.addSharingValues(person.getHaplo1(), person2.getHaplo2(), person.getPos(), person2.getPos());
 

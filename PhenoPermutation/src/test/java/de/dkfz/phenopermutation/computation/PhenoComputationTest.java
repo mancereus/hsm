@@ -11,7 +11,7 @@ import de.dkfz.phenopermutation.Haplotype;
 import de.dkfz.phenopermutation.Person;
 import de.dkfz.phenopermutation.Phenotype;
 import de.dkfz.phenopermutation.Result;
-import de.dkfz.phenopermutation.statistic.test.SharingResult;
+import de.dkfz.phenopermutation.statistic.sharing.SharingResult;
 
 public class PhenoComputationTest {
 

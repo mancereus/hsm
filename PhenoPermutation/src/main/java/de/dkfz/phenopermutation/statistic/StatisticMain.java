@@ -20,8 +20,8 @@ import de.dkfz.phenopermutation.importer.HaploImporter;
 import de.dkfz.phenopermutation.importer.PhenoImporter;
 import de.dkfz.phenopermutation.statistic.asymptotic.AsymptoticResult;
 import de.dkfz.phenopermutation.statistic.asymptotic.AsymptoticStatistics;
-import de.dkfz.phenopermutation.statistic.test.SharingResult;
-import de.dkfz.phenopermutation.statistic.test.SharingStatistics;
+import de.dkfz.phenopermutation.statistic.sharing.SharingResult;
+import de.dkfz.phenopermutation.statistic.sharing.SharingStatistics;
 
 public class StatisticMain {
 

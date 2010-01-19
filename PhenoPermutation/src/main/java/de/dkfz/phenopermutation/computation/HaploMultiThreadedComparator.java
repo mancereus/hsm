@@ -19,7 +19,7 @@ import de.dkfz.phenopermutation.Phenotype;
 import de.dkfz.phenopermutation.Result;
 import de.dkfz.phenopermutation.importer.HaploImporter;
 import de.dkfz.phenopermutation.importer.PhenoImporter;
-import de.dkfz.phenopermutation.statistic.test.SharingResult;
+import de.dkfz.phenopermutation.statistic.sharing.SharingResult;
 
 /**
  * has some trouble
