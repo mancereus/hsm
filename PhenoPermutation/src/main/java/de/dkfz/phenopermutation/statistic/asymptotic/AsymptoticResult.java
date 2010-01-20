@@ -32,9 +32,9 @@ public class AsymptoticResult implements Result<Map<AsymptoticResult.TYPE, Objec
     final double[] ax;
     final double[] bx;
     final double[] dx;
-    double ay;
-    double by;
-    double dy;
+    Double ay;
+    Double by;
+    Double dy;
 
     final Map<TYPE, Object> result = Maps.newEnumMap(TYPE.class);
 
@@ -44,8 +44,8 @@ public class AsymptoticResult implements Result<Map<AsymptoticResult.TYPE, Objec
     private final Phenotype[] phenos;
 
     private final int personsize;
-    private double[][] tmpDx;
-    private double[] tmpDy;
+    private final double[][] tmpDx;
+    private final double[] tmpDy;
     private final double[][] m;
 
     public AsymptoticResult(Phenotype[] phenos, int positionsize, int permutationsize, int personsize) {
@@ -89,14 +89,11 @@ public class AsymptoticResult implements Result<Map<AsymptoticResult.TYPE, Objec
 
     @Override
     public void finalizePersonRow(Person per1) {
-        // nothing to do
         dy += getRowSumSquareDy(per1);
-        tmpDy = new double[personsize * 2];
 
         for (int pos = 0; pos < positionsize; pos++) {
             dx[pos] += getRowSumSquareDx(per1, pos);
         }
-        tmpDx = new double[positionsize][personsize * 2];
 
     }
 
@@ -115,7 +112,7 @@ public class AsymptoticResult implements Result<Map<AsymptoticResult.TYPE, Objec
             for (int permpos = 0; permpos < perms.length; permpos++) {
                 double permpheno1 = phenos[perms[permpos].getMappedId(per1id)].getValue() - getMu();
                 double permpheno2 = phenos[perms[permpos].getMappedId(per2id)].getValue() - getMu();
-                m[per2id + (h2.isHaplo2() ? personsize : 0)][permpos] += sharingvalue + permpheno1 * permpheno2;
+                m[pos][permpos] += 2 * sharingvalue * permpheno1 * permpheno2;
             }
         }
 

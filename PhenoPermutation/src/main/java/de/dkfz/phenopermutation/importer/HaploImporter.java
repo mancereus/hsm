@@ -43,10 +43,10 @@ public class HaploImporter {
                 int id = Integer.parseInt(iterator.next());
                 // second row
                 line = reader.readLine();
-                Haplotype h1 = getHaplo(line);
+                Haplotype h1 = getHaplo(line, false);
                 // third row
                 line = reader.readLine();
-                Haplotype h2 = getHaplo(line);
+                Haplotype h2 = getHaplo(line, true);
                 persons.add(new Person(id, h1, h2));
                 id++;
             }
@@ -58,10 +58,10 @@ public class HaploImporter {
         return persons.toArray(new Person[persons.size()]);
     }
 
-    private Haplotype getHaplo(String s) {
+    private Haplotype getHaplo(String s, boolean isHaplo2) {
 
         int bitlength = s.length();
-        Haplotype h = new Haplotype(bitlength);
+        Haplotype h = new Haplotype(bitlength, isHaplo2);
 
         Iterable<String> splits = Splitter.on('0').split(s);
         int count = 0;
