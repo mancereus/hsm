@@ -19,4 +19,6 @@ public interface Result<Res> {
     // person has been compared with all other persons
     void finalizePersonRow(Person per1);
 
+    void comparePersonsPheno(Person person);
+
 }

@@ -36,11 +36,9 @@ public class HaploSharingComparator implements HaploComparator {
         for (int i = 0; i < personSize - 1; i++) {
             long start = System.currentTimeMillis();
             Person per1 = persons[i];
-            // System.out.println("Person " + i);
             compareWithinPersonHaplos(per1);
             for (int j = i + 1; j < personSize; j++) {
                 Person per2 = persons[j];
-                // System.out.println("        Person " + j);
                 compareBetweenPersonHaplos(per1, per2);
                 // log.info(" person(i) to person(j): {} time: {}", i + "->" +
                 // j, System.currentTimeMillis() - start);
@@ -50,6 +48,7 @@ public class HaploSharingComparator implements HaploComparator {
         }
         // compare last person
         compareWithinPersonHaplos(persons[personSize - 1]);
+        result.finalizePersonRow(persons[personSize - 1]);
         log.info("all finished: {}min", (System.currentTimeMillis() - start0) / 1000);
     }
 
@@ -70,6 +69,7 @@ public class HaploSharingComparator implements HaploComparator {
         /*
          * within person comparison
          */
+        result.comparePersonsPheno(person);
         result.addSharingValues(person.getHaplo1(), person.getHaplo2(), person.getPos(), person.getPos());
     }
 

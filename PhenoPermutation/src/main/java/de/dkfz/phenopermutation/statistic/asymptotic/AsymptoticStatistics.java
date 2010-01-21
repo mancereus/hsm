@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.math.MathException;
+import org.apache.commons.math.distribution.TDistribution;
+import org.apache.commons.math.distribution.TDistributionImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,20 +25,55 @@ public class AsymptoticStatistics implements Statistic {
 
     private final Map<TYPE, Object> result;
 
-    private int haplosize;
+    private final double haplosize;
+
+    private final int permutationsize;
+
+    private final TDistribution t;
+
+    private final static double zero = Math.pow(10, -16);
 
     private final double[][] m;
 
     public AsymptoticStatistics(Map<AsymptoticResult.TYPE, Object> result) {
         this.result = result;
         m = ((double[][]) result.get(TYPE.M));
+        permutationsize = getP();
+        haplosize = getH();
+        t = new TDistributionImpl(haplosize - 1);
+
     }
 
     private String getOutput() throws MathException {
         StringBuilder str = new StringBuilder();
-        for (int i = 0; i < getPositionsize(); i++) {
-            str.append(Joiner.on(" ").join(i, getM(i), getT(i), getEM(i), "\n"));
+        for (int pos = 0; pos < getPositionsize(); pos++) {
+
+            double M = getM(pos);
+            double T = getT(pos);
+            double pi = 0;
+            double pj = 0;
+            double Mi;
+            double Ti;
+
+            for (int j = 0; j < permutationsize; j++) {
+
+                Mi = getMi(pos, j);
+                Ti = getTi(pos, j);
+                pi = T < Ti ? pi + 1. : pi;
+                pj = M < Mi ? pj + 1. : pj;
+
+            }
+
+            pi /= (new Double(permutationsize)).doubleValue() - 1.;
+            pj /= (new Double(permutationsize)).doubleValue() - 1.;
+
+            double p = getPM(pos);
+
+            // str.append(Joiner.on(" ").join(i, getM(i), getAy(), getBy(),
+            // getDy(), getGy(), getHy(), getKy(), getAx(i),
+            str.append(Joiner.on(" ").join(pos, M, T, p, pi, pj, "\n"));
         }
+        System.out.println(str);
         return str.toString();
     }
 
@@ -51,7 +88,7 @@ public class AsymptoticStatistics implements Statistic {
         }
         String outfile = result;
         try {
-            String file = "src/test/resources/" + outfile + ".hsm";
+            String file = "test/" + outfile + ".hsm";
             Files.write(getOutput().getBytes(), new File(file));
             log.info("write output to {}", file);
         } catch (IOException e) {
@@ -61,6 +98,14 @@ public class AsymptoticStatistics implements Statistic {
 
     public int getPositionsize() {
         return ((double[]) result.get(TYPE.Ax)).length;
+    }
+
+    public Double getH() {
+        return (Double) result.get(TYPE.H);
+    }
+
+    public Integer getP() {
+        return (Integer) result.get(TYPE.P);
     }
 
     public double getAx(int pos) {
@@ -88,9 +133,9 @@ public class AsymptoticStatistics implements Statistic {
     }
 
     /*
-     * Gx := Ax*Ax Hx := Dx – Bx Kx := Gx + 2*Bx – 4*Dx
+     * Gx := AxAx Hx := Dx – Bx Kx := Gx + 2Bx – 4Dx
      * 
-     * Gy := Ay*Ay Hy := Dy – By Ky := Gy + 2*By – 4*Dy
+     * Gy := AyAy Hy := Dy – By Ky := Gy + 2By – 4Dy
      */
 
     public double getGx(int pos) {
@@ -125,12 +170,13 @@ public class AsymptoticStatistics implements Statistic {
 
     /**
      * V = (2*Bx*By + 4*Hx*Hy/(h-2) + Kx*Ky/((h-2)) – GxGy/(h*(h-1)))/(h*(h-1))
-     * Wenn V>0, dann ist SDM := sqrt(V)
+     * Wenn V>0, dann ist SDM := sqrt(V) V = ( 2*bx*by + 4*hx*hy/ (n-2) + kx*ky/
+     * ((n-2)*(n-3)) - gx*gy/ (n*(n-1)))/(n*(n-1));
      */
     @Override
     public double getSDM(int pos) {
         double vup1 = 2 * getBy() * getBx(pos) + 4 * getHx(pos) * getHy() / (haplosize - 2);
-        double vup2 = getKx(pos) * getKy() / (haplosize - 2);
+        double vup2 = getKx(pos) * getKy() / ((haplosize - 2) * (haplosize - 3));
         double vup3 = getGx(pos) * getGy() / (haplosize * (haplosize - 1));
         double vup = vup1 + vup2 - vup3;
         double vdown = (haplosize * (haplosize - 1));
@@ -144,6 +190,10 @@ public class AsymptoticStatistics implements Statistic {
         return m[pos][0];
     }
 
+    private double getMi(int pos, int i) {
+        return m[pos][i];
+    }
+
     /*
      * Wenn V>0, dann ist t=(M-EM)/SDM sonst t:= -99
      */
@@ -153,6 +203,23 @@ public class AsymptoticStatistics implements Statistic {
             return (getM(pos) - getEM(pos)) / getSDM(pos);
         }
         return -99;
+    }
+
+    /*
+     * Wenn V>0, dann ist t=(M-EM)/SDM sonst t:= -99
+     */
+    @Override
+    public double getTi(int pos, int i) {
+        if (getSDM(pos) > 0) {
+            return (getMi(pos, i) - getEM(pos)) / getSDM(pos);
+        }
+        return -99;
+    }
+
+    public double getPM(int idx) throws MathException {
+        if (getSDM(idx) <= zero)
+            return -99;
+        return 1.0 - t.cumulativeProbability(getT(idx));
     }
 
 }

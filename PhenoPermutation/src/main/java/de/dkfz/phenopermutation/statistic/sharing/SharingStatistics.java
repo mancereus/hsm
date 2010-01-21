@@ -147,4 +147,10 @@ public class SharingStatistics implements Statistic {
         return positionsize;
     }
 
+    @Override
+    public double getTi(int pos, int i) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
 }

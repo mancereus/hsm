@@ -25,16 +25,18 @@ public class AsymptoticResult implements Result<Map<AsymptoticResult.TYPE, Objec
     private final static Logger log = LoggerFactory.getLogger(AsymptoticResult.class);
 
     public enum TYPE {
-        Ax, Bx, Dx, Ay, By, Dy, M
+        Ax, Bx, Dx, Ay, By, Dy, M, H, P
     };
 
     // position
     final double[] ax;
     final double[] bx;
     final double[] dx;
-    Double ay;
-    Double by;
-    Double dy;
+    final double h;
+    final int p;
+    Double ay = new Double(0.0);
+    Double by = new Double(0.0);
+    Double dy = new Double(0.0);
 
     final Map<TYPE, Object> result = Maps.newEnumMap(TYPE.class);
 
@@ -59,6 +61,8 @@ public class AsymptoticResult implements Result<Map<AsymptoticResult.TYPE, Objec
         tmpDx = new double[positionsize][personsize * 2];
         tmpDy = new double[personsize * 2];
         m = new double[positionsize][permutationsize];
+        h = personsize * 2.;
+        p = permutationsize;
         result.put(TYPE.Ax, ax);
         result.put(TYPE.Bx, bx);
         result.put(TYPE.Dx, dx);
@@ -66,6 +70,8 @@ public class AsymptoticResult implements Result<Map<AsymptoticResult.TYPE, Objec
         result.put(TYPE.By, by);
         result.put(TYPE.Dy, dy);
         result.put(TYPE.M, m);
+        result.put(TYPE.H, h);
+        result.put(TYPE.P, p);
 
         // first permutation is identity
         permutators[0] = new Permutator(personsize, true);
@@ -79,22 +85,41 @@ public class AsymptoticResult implements Result<Map<AsymptoticResult.TYPE, Objec
     public void comparePersons(Person person, Person person2) {
         double pheno1 = phenos[person.getPos()].getValue() - getMu();
         double pheno2 = phenos[person2.getPos()].getValue() - getMu();
-        ay += pheno1 * pheno2 * 2;
-        by += pheno1 * pheno2 * pheno1 * pheno2 * 2;
-        tmpDy[person.getPos()] += pheno1 * pheno2;
-        tmpDy[person2.getPos()] += pheno1 * pheno2;
-        tmpDy[person.getPos() + personsize] += pheno1 * pheno2;
-        tmpDy[person2.getPos() + personsize] += pheno1 * pheno2;
+
+        double pheno12 = pheno1 * pheno2;
+
+        ay += pheno12 * 8;
+        by += pheno12 * pheno12 * 8;
+        result.put(TYPE.Ay, ay);
+        result.put(TYPE.By, by);
+        tmpDy[person.getPos()] += 2 * pheno1 * pheno2;
+        tmpDy[person2.getPos()] += 2 * pheno1 * pheno2;
+        tmpDy[person.getPos() + personsize] += 2 * pheno1 * pheno2;
+        tmpDy[person2.getPos() + personsize] += 2 * pheno1 * pheno2;
+    }
+
+    @Override
+    public void comparePersonsPheno(Person person) {
+        double pheno1 = phenos[person.getPos()].getValue() - getMu();
+        double pheno12 = pheno1 * pheno1;
+
+        ay += pheno12 * 2;
+        by += pheno12 * pheno12 * 2;
+        result.put(TYPE.Ay, ay);
+        result.put(TYPE.By, by);
+        tmpDy[person.getPos()] += pheno12;
+        tmpDy[person.getPos() + personsize] += pheno12;
     }
 
     @Override
     public void finalizePersonRow(Person per1) {
+
         dy += getRowSumSquareDy(per1);
 
         for (int pos = 0; pos < positionsize; pos++) {
             dx[pos] += getRowSumSquareDx(per1, pos);
         }
-
+        result.put(TYPE.Dy, dy);
     }
 
     @Override
@@ -105,8 +130,8 @@ public class AsymptoticResult implements Result<Map<AsymptoticResult.TYPE, Objec
 
         for (int pos = 0; pos < h1.getLength(); pos++) {
             int sharingvalue = calc.getNextSharing();
-            ax[pos] += sharingvalue;
-            bx[pos] += sharingvalue * sharingvalue;
+            ax[pos] += 2 * sharingvalue;
+            bx[pos] += 2 * sharingvalue * sharingvalue;
             tmpDx[pos][per1id + (h1.isHaplo2() ? personsize : 0)] += sharingvalue;
             tmpDx[pos][per2id + (h2.isHaplo2() ? personsize : 0)] += sharingvalue;
             for (int permpos = 0; permpos < perms.length; permpos++) {
@@ -131,7 +156,8 @@ public class AsymptoticResult implements Result<Map<AsymptoticResult.TYPE, Objec
     }
 
     private double getMu() {
-        return 0.01;
+        double mu = 2. / 3.;
+        return mu;
         // compute from phenos, cache
     }
 

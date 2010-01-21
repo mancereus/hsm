@@ -12,4 +12,6 @@ public interface Statistic {
 
     double getEM(int posidx);
 
+    double getTi(int pos, int i);
+
 }

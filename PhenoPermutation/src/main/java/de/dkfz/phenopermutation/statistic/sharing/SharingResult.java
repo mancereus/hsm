@@ -51,6 +51,11 @@ public class SharingResult implements Result<Map<Permutator, double[]>> {
     }
 
     @Override
+    public void comparePersonsPheno(Person person2) {
+        // nothing to do
+    }
+
+    @Override
     public void finalizePersonRow(Person per1) {
         // nothing to do
     }
