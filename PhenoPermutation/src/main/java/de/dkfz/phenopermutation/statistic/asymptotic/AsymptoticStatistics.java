@@ -68,13 +68,14 @@ public class AsymptoticStatistics implements Statistic {
 
             }
 
+            str.append("\n");
             // pi /= (new Double(permutationsize)).doubleValue() - 1.;
             // pj /= (new Double(permutationsize)).doubleValue() - 1.;
 
             // str.append(Joiner.on(" ").join(i, getM(i), getAy(), getBy(),
             // getDy(), getGy(), getHy(), getKy(), getAx(i),
         }
-        System.out.println(str);
+        // System.out.println(str);
         return str.toString();
     }
 
