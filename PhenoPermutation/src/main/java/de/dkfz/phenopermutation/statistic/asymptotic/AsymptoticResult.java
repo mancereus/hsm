@@ -156,7 +156,8 @@ public class AsymptoticResult implements Result<Map<AsymptoticResult.TYPE, Objec
     }
 
     private double getMu() {
-        double mu = 2. / 3.;
+
+        double mu = 0.4622642;
         return mu;
         // compute from phenos, cache
     }

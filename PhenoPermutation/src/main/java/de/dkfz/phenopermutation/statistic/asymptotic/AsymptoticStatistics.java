@@ -50,28 +50,29 @@ public class AsymptoticStatistics implements Statistic {
 
             double M = getM(pos);
             double T = getT(pos);
-            double pi = 0;
-            double pj = 0;
-            double Mi;
+            // double pi = 0;
+            // double pj = 0;
+            // double Mi;
             double Ti;
+
+            double p = getPM(pos);
+            str.append(Joiner.on(" ").join(pos, M, T, p));
 
             for (int j = 0; j < permutationsize; j++) {
 
-                Mi = getMi(pos, j);
+                // Mi = getMi(pos, j);
                 Ti = getTi(pos, j);
-                pi = T < Ti ? pi + 1. : pi;
-                pj = M < Mi ? pj + 1. : pj;
+                // pi = T < Ti ? pi + 1. : pi;
+                // pj = M < Mi ? pj + 1. : pj;
+                str.append(" " + Ti);
 
             }
 
-            pi /= (new Double(permutationsize)).doubleValue() - 1.;
-            pj /= (new Double(permutationsize)).doubleValue() - 1.;
-
-            double p = getPM(pos);
+            // pi /= (new Double(permutationsize)).doubleValue() - 1.;
+            // pj /= (new Double(permutationsize)).doubleValue() - 1.;
 
             // str.append(Joiner.on(" ").join(i, getM(i), getAy(), getBy(),
             // getDy(), getGy(), getHy(), getKy(), getAx(i),
-            str.append(Joiner.on(" ").join(pos, M, T, p, pi, pj, "\n"));
         }
         System.out.println(str);
         return str.toString();
