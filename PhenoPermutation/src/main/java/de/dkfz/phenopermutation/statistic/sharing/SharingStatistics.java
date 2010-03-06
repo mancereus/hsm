@@ -71,7 +71,8 @@ public class SharingStatistics implements Statistic {
         Person[] persons = new HaploImporter().importHaplos(new File(filename));
         // "src/main/resources/mammastu.ent.chr.22.hap"));
         int haplosize = persons[0].getHaplo1().getLength();
-        Result<Map<Permutator, double[]>> result = new SharingResult(phenos, haplosize, permutationsize, persons.length);
+        Result<Map<Permutator, double[]>> result = new SharingResult(phenos, haplosize, permutationsize,
+                persons.length, 0.66666666666666666666666666666);
 
         HaploComparator pc = new HaploSharingComparator(result, persons);
         pc.calculateSharing();

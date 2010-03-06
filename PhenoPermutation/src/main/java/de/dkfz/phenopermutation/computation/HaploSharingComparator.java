@@ -1,18 +1,11 @@
 package de.dkfz.phenopermutation.computation;
 
-import java.io.File;
-import java.io.IOException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.dkfz.phenopermutation.HaploComparator;
 import de.dkfz.phenopermutation.Person;
-import de.dkfz.phenopermutation.Phenotype;
 import de.dkfz.phenopermutation.Result;
-import de.dkfz.phenopermutation.importer.HaploImporter;
-import de.dkfz.phenopermutation.importer.PhenoImporter;
-import de.dkfz.phenopermutation.statistic.sharing.SharingResult;
 
 public class HaploSharingComparator implements HaploComparator {
 
@@ -73,24 +66,26 @@ public class HaploSharingComparator implements HaploComparator {
         result.addSharingValues(person.getHaplo1(), person.getHaplo2(), person.getPos(), person.getPos());
     }
 
-    public static void main(String[] args) throws IOException {
-
-        Phenotype[] phenos = new PhenoImporter()
-        // .importPhenos(new File("src/test/resources/phenotest.ga"));
-                .importPhenos(new File("src/main/resources/mammastu.pheno.ga"));
-        Person[] persons = new HaploImporter().importHaplos(new File(
-        // "src/test/resources/haplotest.dat"));
-                "src/main/resources/mammastu.ent.chr.22.hap"));
-        int permutationsize = 100;
-        int haplosize = persons[0].getHaplo1().getLength();
-        Result result = new SharingResult(phenos, haplosize, permutationsize, persons.length);
-
-        HaploSharingComparator pc = new HaploSharingComparator(result, persons);
-        // Map<Permutator, double[]> permutatorSum = pc.computeSharing(phenos,
-        // persons);
-        // log.info("result:" + permutatorSum);
-
-    }
+    // public static void main(String[] args) throws IOException {
+    //
+    // Phenotype[] phenos = new PhenoImporter()
+    // // .importPhenos(new File("src/test/resources/phenotest.ga"));
+    // .importPhenos(new File("src/main/resources/mammastu.pheno.ga"));
+    // Person[] persons = new HaploImporter().importHaplos(new File(
+    // // "src/test/resources/haplotest.dat"));
+    // "src/main/resources/mammastu.ent.chr.22.hap"));
+    // int permutationsize = 100;
+    // int haplosize = persons[0].getHaplo1().getLength();
+    // Result result = new SharingResult(phenos, haplosize, permutationsize,
+    // persons.length,
+    // 0.66666666666666666666666666666);
+    //
+    // HaploSharingComparator pc = new HaploSharingComparator(result, persons);
+    // // Map<Permutator, double[]> permutatorSum = pc.computeSharing(phenos,
+    // // persons);
+    // // log.info("result:" + permutatorSum);
+    //
+    // }
 
     // public Map<Permutator, double[]> computeSharing() {
     // calculateSharing();

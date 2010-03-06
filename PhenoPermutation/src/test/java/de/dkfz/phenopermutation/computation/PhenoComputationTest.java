@@ -46,7 +46,7 @@ public class PhenoComputationTest {
         }
         Person[] personsarr = persons.toArray(new Person[persons.size()]);
         int haplosize = personsarr[0].getHaplo1().getLength();
-        Result result = new SharingResult(phenos, haplosize, 2, personsarr.length);
+        Result result = new SharingResult(phenos, haplosize, 2, personsarr.length, 0.1);
 
         HaploSharingComparator pc = new HaploSharingComparator(result, personsarr);
         pc.calculateSharing();

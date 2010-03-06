@@ -31,10 +31,13 @@ public class SharingResult implements Result<Map<Permutator, double[]>> {
 
     private final Phenotype[] phenos;
 
-    public SharingResult(Phenotype[] phenos, int positionsize, int permutationsize, int personsize) {
+    private final double mu;
+
+    public SharingResult(Phenotype[] phenos, int positionsize, int permutationsize, int personsize, double mu) {
         this.permutationsize = permutationsize;
         this.positionsize = positionsize;
         this.phenos = phenos;
+        this.mu = mu;
         permutators = new Permutator[permutationsize];
         result = new double[positionsize * permutationsize];
         // first permutation is identity
@@ -76,7 +79,7 @@ public class SharingResult implements Result<Map<Permutator, double[]>> {
     }
 
     private double getMu() {
-        return 0.66666666666666666666666666666;
+        return mu;
         // compute from phenos, cache
     }
 

@@ -43,6 +43,9 @@ public class StatisticMain {
     @Argument(value = "permsize", alias = "ps", description = "permutationsize")
     private final Integer permsize = Integer.valueOf(10);
 
+    @Argument(value = "mu", alias = "mu", description = "mu value")
+    private final Double mu = Double.valueOf(0.66666666666666666666666666666);
+
     public StatisticMain() {
     }
 
@@ -93,7 +96,7 @@ public class StatisticMain {
 
     private Statistic getSharingStatistics(Phenotype[] phenos, Person[] persons, int haplosize) {
         Statistic shst;
-        Result<Map<Permutator, double[]>> result = new SharingResult(phenos, haplosize, permsize, persons.length);
+        Result<Map<Permutator, double[]>> result = new SharingResult(phenos, haplosize, permsize, persons.length, mu);
         HaploComparator pc = new HaploSharingComparator(result, persons);
         pc.calculateSharing();
         shst = new SharingStatistics(result.getResult());
